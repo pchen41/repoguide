@@ -84,4 +84,22 @@ describe('git utilities', () => {
     repo.git(['add', 'bad\nname.txt']);
     expect(() => listTrackedEntries(repo.root)).toThrow(/newline/);
   });
+
+  it('treats submodules as opaque gitlinks and does not recurse into them', () => {
+    const child = createFixtureRepo();
+    try {
+      child.write('inside.txt', 'submodule content\n');
+      child.commitAll('submodule source');
+
+      repo = createFixtureRepo();
+      repo.git(['-c', 'protocol.file.allow=always', 'submodule', 'add', child.root, 'deps/lib']);
+      repo.commitAll('add submodule');
+
+      const entries = listTrackedEntries(repo.root);
+      expect(entries).toContainEqual(expect.objectContaining({ path: 'deps/lib', mode: '160000' }));
+      expect(listTrackedFiles(repo.root)).not.toContain('deps/lib/inside.txt');
+    } finally {
+      child.cleanup();
+    }
+  });
 });

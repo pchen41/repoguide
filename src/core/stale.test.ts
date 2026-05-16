@@ -84,4 +84,16 @@ describe('freshness', () => {
     expect(context.sourceFiles).toEqual(['src/a.ts']);
     expect(context.tree.nodes.get('src')?.hasGuide).toBe(true);
   });
+
+  it('does not mark CRLF working-tree rewrites stale when Git reports no content change', () => {
+    repo = createFixtureRepo();
+    repo.write('.gitattributes', 'src/a.txt text eol=lf\n');
+    repo.write('src/a.txt', 'one\ntwo\n');
+    repo.write('src/guide.md', '# src\n\n## Responsibility\n\n## Important Files\n\n## Child Modules\n\n## Notes\n');
+    repo.commitAll('lf source and guide');
+
+    repo.write('src/a.txt', 'one\r\ntwo\r\n');
+    expect(repo.git(['diff', '--name-status']).trim()).toBe('');
+    expect(freshnessForFolder(repo.root, node('src'), ['src/a.txt']).needsAttention).toBe(false);
+  });
 });

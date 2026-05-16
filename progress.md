@@ -10,22 +10,23 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Second pass added fixture-backed Git, freshness, command, and OpenAI provider tests.
 - Third pass added prompt, guide generation, `.guideignore`, env, and tree edge-case tests.
 - Fourth pass added empty repo, detached HEAD, newline path, init dry-run/no-guide/failure, and update no-guide/dry-run tests.
+- Fifth pass added real local submodule, CRLF/LF no-diff freshness, CLI main error/help, and README command example tests.
 - 100% coverage enforcement is intentionally skipped for now per user direction; coverage still reports current percentages.
 
 ## Task Progress
 
 - Task 1: Project Scaffold - done.
-- Task 2: Environment Configuration - partial.
+- Task 2: Environment Configuration - mostly done.
 - Task 3: Git Utilities - mostly done.
-- Task 4: `.guideignore` - partial.
-- Task 5: Folder Tree - partial.
+- Task 4: `.guideignore` - mostly done.
+- Task 5: Folder Tree - mostly done.
 - Task 6: LLM Provider Interface and OpenAI - mostly done.
-- Task 7: Prompting and Guide Validation - partial.
-- Task 8: `init` - partial.
+- Task 7: Prompting and Guide Validation - mostly done.
+- Task 8: `init` - mostly done.
 - Task 9: Git-Based Freshness and `check` - mostly done.
-- Task 10: `update` - partial.
-- Task 11: `estimate init` and `estimate update` - partial.
-- Task 12: Integration, Coverage, and Packaging - partial.
+- Task 10: `update` - mostly done.
+- Task 11: `estimate init` and `estimate update` - mostly done.
+- Task 12: Integration, Coverage, and Packaging - mostly done.
 
 ## In Flight
 
@@ -42,7 +43,8 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Second pass added tests for repo root detection, tracked/untracked files, paths with spaces, staged/unstaged changes, renames, deletes, mode-only changes, missing/no-history guides, ignored freshness, child guide staleness, command init/check/update/estimate flows, OpenAI request shape, no-guide parsing, retry, timeout, and config validation.
 - Third pass added tests for prompt binary/invalid UTF-8/submodule/truncation notes, guide generation dry-run/no-guide/failure/symlink refusal, tree ancestor/guide helpers, `.guideignore` comments/exact paths, and non-LLM env loading.
 - Fourth pass added tests for empty repos, detached HEAD, unsupported newline paths, init dry-run/no-guide/provider failure reporting, and update no-guide/dry-run preservation.
-- Remaining work: cover real submodule fixtures, CRLF/LF fixtures, README example assertions, and additional CLI `main()` error-path tests.
+- Fifth pass added tests for real local submodule gitlinks, CRLF/LF rewrites when Git reports no diff, CLI `main()` help/unknown/outside-repo paths, and README command examples.
+- Remaining work: 100% coverage enforcement remains intentionally skipped; extra hardening could include malformed `.env` behavior if Node exposes stricter parse errors, more README output wording assertions, and additional large-repo performance fixtures.
 - Coverage command now reports but does not enforce 100% thresholds, by user request.
 
 Task:
@@ -57,6 +59,19 @@ Result:
 done
 Follow-ups:
 None for scaffold.
+
+Task:
+Tasks 3, 9, 12
+Status:
+mostly done / better verified
+Files changed:
+src/core/git.test.ts, src/core/stale.test.ts, src/cli-main.test.ts, src/readme.test.ts, progress.md
+Tests run:
+npm run build; npm test; npm run coverage; npm_config_cache=/private/tmp/repoguide-npm-cache npm pack --dry-run
+Result:
+done for this pass; 46 tests pass and coverage is about 92% statements / 94% lines
+Follow-ups:
+100% coverage enforcement remains intentionally skipped by user request.
 
 Task:
 Tasks 3, 8, 10, 12
