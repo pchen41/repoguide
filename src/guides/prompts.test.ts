@@ -36,6 +36,8 @@ describe('prompt builder', () => {
       promptBudgetChars: 2200
     });
     expect(result.prompt).toContain('internal wiki page');
+    expect(result.prompt).toContain('flexible wiki-page structure');
+    expect(result.prompt).toContain('Choose section names that fit this folder instead of forcing a fixed template');
     expect(result.prompt).toContain('Do not write filler like "README.md is documentation"');
     expect(result.prompt).toContain('gotchas, invariants, operational workflows');
     expect(result.prompt).toContain('File src/a.ts');

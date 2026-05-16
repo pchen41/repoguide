@@ -14,6 +14,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Sixth pass tuned guide prompting away from file inventories and toward internal wiki guidance.
 - Seventh pass added `repoguide init --force` for regenerating existing guides.
 - Eighth pass added generation progress messages for `init` and `update`.
+- Ninth pass loosened guide validation and prompting from a fixed template to a free-form wiki page with a minimal heading/section contract.
 - 100% coverage enforcement is intentionally skipped for now per user direction; coverage still reports current percentages.
 
 ## Task Progress
@@ -50,6 +51,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Sixth pass updated prompt guidance to discourage obvious conventional-file descriptions and ask for responsibilities, boundaries, contracts, workflows, invariants, gotchas, and maintenance advice.
 - Seventh pass added `init --force`, README/help coverage, and command tests proving default init still skips existing guides while force regenerates them.
 - Eighth pass added progress output before provider calls, including bounded `init [i/n]` messages and incremental `update [i]` messages.
+- Ninth pass replaced the fixed required-section guide template with flexible wiki sections while retaining exact top-heading validation and requiring at least one `##` section.
 - Remaining work: 100% coverage enforcement remains intentionally skipped; extra hardening could include malformed `.env` behavior if Node exposes stricter parse errors, more README output wording assertions, and additional large-repo performance fixtures.
 - Coverage command now reports but does not enforce 100% thresholds, by user request.
 
@@ -65,6 +67,19 @@ Result:
 done
 Follow-ups:
 None for scaffold.
+
+Task:
+Task 7: Prompting and Guide Validation
+Status:
+mostly done / free-form wiki format enabled
+Files changed:
+src/guides/prompts.ts, src/guides/validate.ts, src/guides/prompts.test.ts, src/guides/validate.test.ts, tasks.md, progress.md
+Tests run:
+npm run build; npm test; npm run coverage; npm_config_cache=/private/tmp/repoguide-npm-cache npm pack --dry-run
+Result:
+guides may now use free-form wiki sections instead of the old fixed four-section template
+Follow-ups:
+Regenerate existing guides with `repoguide init --force` to apply the new format.
 
 Task:
 Tasks 8 and 10: `init` and `update`

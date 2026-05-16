@@ -293,25 +293,24 @@ Spec:
 - Include clear prompt notes for any truncated file or child guide.
 - Skip or truncate child guide content if needed to stay within the prompt budget.
 - Use the same prompt builder for generation and estimation.
-- Standard guide structure:
+- Recommended guide shape is a free-form wiki page. The guide must start with the exact top heading, include useful body content, and include at least one second-level section. Suggested section ideas include:
 
 ```md
 # path/to/folder
 
-## Responsibility
+## How This Fits
 
-## Important Files
+## Main Workflows
 
-## Child Modules
+## Contracts and Invariants
 
-## Notes
+## Gotchas
 ```
 
 - The required top heading is exact: `# .` for the repo root, otherwise `# path/to/folder` using the repo-relative POSIX folder path.
-- Required headings are exact and case-sensitive: `## Responsibility`, `## Important Files`, `## Child Modules`, and `## Notes`.
-- Extra sections are allowed after the required sections.
+- Section headings are flexible; choose names that fit the folder instead of forcing a fixed template.
 - Reject empty guide output.
-- Reject guide output missing the required top heading or required sections.
+- Reject guide output missing the required top heading, useful body content, or any second-level section.
 - If update gets no-guide for an existing guide, leave the existing guide unchanged and report it.
 
 Tests:
@@ -325,10 +324,10 @@ Tests:
 - Prompt is deterministic.
 - No-guide instruction is present.
 - Valid guide markdown passes.
-- Missing sections fail.
+- Missing body content or all second-level sections fails.
 - Missing or wrong top heading fails.
-- Header validation is exact and case-sensitive.
-- Extra sections are allowed.
+- Top heading validation is exact and case-sensitive.
+- Free-form sections are allowed.
 - Existing guide is preserved on no-guide update.
 
 ## Task 8: `init`
