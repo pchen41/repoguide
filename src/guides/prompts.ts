@@ -60,10 +60,17 @@ export function buildGuidePrompt(options: PromptBuildOptions): PromptBuildResult
   const truncatedNotes: string[] = [];
   const parts: string[] = [];
 
-  parts.push(`You are writing a committed guide.md file for a Git repository folder.\n`);
+  parts.push(`You are writing a committed guide.md file for a Git repository folder. Treat it as an internal wiki page for experienced developers and coding agents, not a generated file inventory.\n`);
   parts.push(`Folder: ${folderPath}\n\n`);
   parts.push(`Return exactly ${NO_GUIDE_SENTINEL} as plain text only if this folder does not deserve a guide. Do not wrap the sentinel in markdown fences, backticks, explanations, or extra text.\n`);
-  parts.push(`If you write a guide, use this exact structure and mention only real repo-relative paths:\n\n`);
+  parts.push(`If you write a guide, optimize for useful context a new maintainer could not get from file names alone:\n`);
+  parts.push(`- Explain responsibilities, boundaries, data/control flow, important contracts, and how this folder fits with nearby folders.\n`);
+  parts.push(`- In Important Files, mention only files whose role is non-obvious, central to changing behavior, or easy to misuse. Do not write filler like "README.md is documentation", "package.json defines the package", or generic one-line descriptions of conventional files unless there is a repo-specific detail worth knowing.\n`);
+  parts.push(`- In Child Modules, summarize why each child exists and when someone should go there, using child guide content when available.\n`);
+  parts.push(`- In Notes, capture gotchas, invariants, operational workflows, testing implications, and maintenance advice. Prefer actionable guidance over restating source names.\n`);
+  parts.push(`- If a required section has nothing useful to add, write "None." instead of padding it.\n`);
+  parts.push(`Mention only real repo-relative paths and avoid inventing files.\n\n`);
+  parts.push(`Use this exact structure:\n\n`);
   parts.push(`${folderPath === '.' ? '# .' : `# ${folderPath}`}\n\n## Responsibility\n\n## Important Files\n\n## Child Modules\n\n## Notes\n\n`);
 
   parts.push(`Direct files:\n${options.folder.directFiles.length ? options.folder.directFiles.map((file) => `- ${file}`).join('\n') : '- none'}\n\n`);

@@ -33,13 +33,16 @@ describe('prompt builder', () => {
       tree,
       gitEntries: new Map(entries.map((item) => [item.path, item])),
       maxFileBytes: 25,
-      promptBudgetChars: 1200
+      promptBudgetChars: 2200
     });
+    expect(result.prompt).toContain('internal wiki page');
+    expect(result.prompt).toContain('Do not write filler like "README.md is documentation"');
+    expect(result.prompt).toContain('gotchas, invariants, operational workflows');
     expect(result.prompt).toContain('File src/a.ts');
     expect(result.prompt).toContain('Child guide src/child/guide.md');
     expect(result.skippedNotes.join('\n')).toContain('src/large.txt skipped');
     expect(result.skippedNotes.join('\n')).toContain('src/link skipped: symlink');
-    expect(result.characterCount).toBeLessThanOrEqual(1200);
+    expect(result.characterCount).toBeLessThanOrEqual(2200);
   });
 
   it('reports binary, invalid UTF-8, submodule, and aggregate truncation notes deterministically', () => {
@@ -55,13 +58,13 @@ describe('prompt builder', () => {
       tree,
       gitEntries: new Map(entries.map((item) => [item.path, item])),
       maxFileBytes: 1000,
-      promptBudgetChars: 620
+      promptBudgetChars: 1450
     });
 
     expect(result.skippedNotes).toContain('src/binary.dat skipped: binary file.');
     expect(result.skippedNotes).toContain('src/invalid.txt skipped: invalid UTF-8.');
     expect(result.skippedNotes).toContain('src/vendor-lib skipped: submodule gitlink.');
     expect(result.truncatedNotes.some((note) => note.includes('file src/long.txt'))).toBe(true);
-    expect(result.characterCount).toBeLessThanOrEqual(620);
+    expect(result.characterCount).toBeLessThanOrEqual(1450);
   });
 });
