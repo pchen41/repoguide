@@ -169,6 +169,37 @@ describe('commands', () => {
     expect(fs.existsSync(`${repo.root}/docs/guide.md`)).toBe(false);
   });
 
+  it('init --force regenerates existing guides while default init skips them', async () => {
+    snapshotEnv();
+    repo = createFixtureRepo();
+    repo.write('src/a.ts', 'a\n');
+    repo.write('guide.md', '# .\n\n## Responsibility\nroot\n\n## Important Files\n\n## Child Modules\n\n## Notes\n');
+    repo.write('src/guide.md', '# src\n\n## Responsibility\nold\n\n## Important Files\n\n## Child Modules\n\n## Notes\n');
+    repo.commitAll('initial');
+
+    const skippedProvider = new FakeProvider();
+    const skipCapture = captureConsole();
+    const skipped = await runInit(repo.root, { provider: skippedProvider });
+    skipCapture.restore();
+    expect(skipped.exitCode).toBe(0);
+    expect(skippedProvider.folders).toEqual([]);
+    expect(skipCapture.stdout.at(-1)).toContain('skipped=2');
+
+    const forceProvider = new FakeProvider({
+      src: {
+        type: 'guide',
+        markdown: '# src\n\n## Responsibility\nnew\n\n## Important Files\n\n## Child Modules\n\n## Notes\n'
+      }
+    });
+    const forceCapture = captureConsole();
+    const forced = await runInit(repo.root, { provider: forceProvider, force: true });
+    forceCapture.restore();
+    expect(forced.exitCode).toBe(0);
+    expect(forceProvider.folders).toEqual(['src', '.']);
+    expect(fs.readFileSync(`${repo.root}/src/guide.md`, 'utf8')).toContain('new');
+    expect(forceCapture.stdout.at(-1)).toContain('created=2');
+  });
+
   it('reports update no-guide and dry-run without overwriting guides', async () => {
     snapshotEnv();
     repo = createFixtureRepo();

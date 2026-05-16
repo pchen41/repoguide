@@ -17,7 +17,7 @@ function programOutput(argv: string[]): { stdout: string; stderr: string; exitCo
     throw Object.assign(new Error('exit'), { exitCode: Number(code) });
   }) as never);
   try {
-    program.parse(['node', 'repoguide', ...argv], { from: 'user' });
+    program.parse(['node', 'repoguide', ...argv], { from: 'node' });
   } catch (error) {
     return { stdout, stderr, exitCode: Number((error as { exitCode?: number }).exitCode ?? 0) };
   } finally {
@@ -29,7 +29,9 @@ function programOutput(argv: string[]): { stdout: string; stderr: string; exitCo
 describe('cli', () => {
   it('lists top-level commands and estimate subcommands', () => {
     expect(programOutput(['--help']).stdout).toContain('init');
-    const estimate = programOutput(['estimate', '--help']).stdout;
+    const initHelp = buildProgram().commands.find((command) => command.name() === 'init')?.helpInformation() ?? '';
+    expect(initHelp).toContain('--force');
+    const estimate = buildProgram().commands.find((command) => command.name() === 'estimate')?.helpInformation() ?? '';
     expect(estimate).toContain('init');
     expect(estimate).toContain('update');
   });

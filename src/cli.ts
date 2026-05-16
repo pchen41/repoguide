@@ -18,7 +18,8 @@ export function buildProgram(): Command {
     .command('init')
     .description('Create missing guides bottom-up across the repository.')
     .option('--dry-run', 'show what would be generated without writing files')
-    .action(async (options: { dryRun?: boolean }) => runAndExit(await runInit(process.cwd(), { dryRun: options.dryRun })));
+    .option('--force', 'regenerate existing guides instead of skipping them')
+    .action(async (options: { dryRun?: boolean; force?: boolean }) => runAndExit(await runInit(process.cwd(), { dryRun: options.dryRun, force: options.force })));
 
   program
     .command('update')

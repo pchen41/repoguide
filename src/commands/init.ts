@@ -10,6 +10,7 @@ import type { CommandResult } from './check.js';
 
 export interface InitOptions {
   dryRun?: boolean;
+  force?: boolean;
   provider?: GuideProvider;
 }
 
@@ -22,17 +23,19 @@ export async function runInit(cwd = process.cwd(), options: InitOptions = {}): P
 
   for (const folder of initPlan(context)) {
     const guidePath = guidePathForFolder(folder.path);
-    if (fs.existsSync(absoluteFromRepo(repoRoot, guidePath))) {
+    const guideExists = fs.existsSync(absoluteFromRepo(repoRoot, guidePath));
+    if (guideExists && !options.force) {
       counts.skipped += 1;
       const freshness = freshnessForFolder(repoRoot, folder, context.sourceFiles);
       if (freshness.stale) {
         counts.stale += 1;
-        console.log(`${folder.path}: existing guide appears stale; run repoguide update to refresh it`);
+        console.log(`${folder.path}: existing guide appears stale; run repoguide update to refresh it, or repoguide init --force to regenerate it`);
       }
       continue;
     }
-    const result = await generateForFolder(context, folder, provider, config.REPOGUIDE_MAX_FILE_BYTES, { dryRun: options.dryRun });
+    const result = await generateForFolder(context, folder, provider, config.REPOGUIDE_MAX_FILE_BYTES, { dryRun: options.dryRun, updateExisting: guideExists });
     if (result.status === 'created') counts.created += 1;
+    if (result.status === 'updated') counts.created += 1;
     if (result.status === 'dry-run') counts.dryRun += 1;
     if (result.status === 'no-guide') counts.noGuide += 1;
     if (result.status === 'failed') {

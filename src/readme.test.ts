@@ -8,7 +8,7 @@ describe('README examples', () => {
     const commands = [...readme.matchAll(/^repoguide (.+)$/gm)].map((match) => match[1]);
     const help = buildProgram().helpInformation();
 
-    expect(commands).toEqual(['init', 'check', 'update', 'estimate init', 'estimate update']);
+    expect(commands).toEqual(['init', 'init --force', 'check', 'update', 'estimate init', 'estimate update']);
     for (const command of ['init', 'check', 'update', 'estimate']) {
       expect(help).toContain(command);
     }

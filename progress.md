@@ -12,6 +12,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Fourth pass added empty repo, detached HEAD, newline path, init dry-run/no-guide/failure, and update no-guide/dry-run tests.
 - Fifth pass added real local submodule, CRLF/LF no-diff freshness, CLI main error/help, and README command example tests.
 - Sixth pass tuned guide prompting away from file inventories and toward internal wiki guidance.
+- Seventh pass added `repoguide init --force` for regenerating existing guides.
 - 100% coverage enforcement is intentionally skipped for now per user direction; coverage still reports current percentages.
 
 ## Task Progress
@@ -46,7 +47,8 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Fourth pass added tests for empty repos, detached HEAD, unsupported newline paths, init dry-run/no-guide/provider failure reporting, and update no-guide/dry-run preservation.
 - Fifth pass added tests for real local submodule gitlinks, CRLF/LF rewrites when Git reports no diff, CLI `main()` help/unknown/outside-repo paths, and README command examples.
 - Sixth pass updated prompt guidance to discourage obvious conventional-file descriptions and ask for responsibilities, boundaries, contracts, workflows, invariants, gotchas, and maintenance advice.
-- Remaining work: 100% coverage enforcement remains intentionally skipped; extra hardening could include malformed `.env` behavior if Node exposes stricter parse errors, more README output wording assertions, additional large-repo performance fixtures, and a future `--force` or `regenerate` workflow for replacing existing uncommitted guides.
+- Seventh pass added `init --force`, README/help coverage, and command tests proving default init still skips existing guides while force regenerates them.
+- Remaining work: 100% coverage enforcement remains intentionally skipped; extra hardening could include malformed `.env` behavior if Node exposes stricter parse errors, more README output wording assertions, and additional large-repo performance fixtures.
 - Coverage command now reports but does not enforce 100% thresholds, by user request.
 
 Task:
@@ -61,6 +63,19 @@ Result:
 done
 Follow-ups:
 None for scaffold.
+
+Task:
+Tasks 8 and 12: `init` and Packaging Docs
+Status:
+mostly done / force regeneration added
+Files changed:
+src/commands/init.ts, src/cli.ts, src/commands/commands.test.ts, src/cli.test.ts, README.md, src/readme.test.ts, progress.md
+Tests run:
+npm run build; npm test; npm run coverage; npm_config_cache=/private/tmp/repoguide-npm-cache npm pack --dry-run
+Result:
+`repoguide init --force` regenerates existing guides while default init remains non-overwriting
+Follow-ups:
+None for force regeneration.
 
 Task:
 Task 7: Prompting and Guide Validation

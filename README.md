@@ -32,10 +32,11 @@ fixtures/large/**
 
 ```sh
 repoguide init
+repoguide init --force
 repoguide check
 repoguide update
 repoguide estimate init
 repoguide estimate update
 ```
 
-`init` bootstraps the whole repository bottom-up and skips existing guides. `update` works from the current folder scope: the current folder, descendants, and ancestors up to the repo root.
+`init` bootstraps the whole repository bottom-up and skips existing guides unless `--force` is used. `update` works from the current folder scope: the current folder, descendants, and ancestors up to the repo root.
