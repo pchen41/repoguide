@@ -22,6 +22,7 @@ export async function runUpdate(cwd = process.cwd(), options: UpdateOptions = {}
   const plan = updatePlan(context, current);
   const changedGuides = new Set<string>();
   const counts = { updated: 0, skipped: 0, noGuide: 0, failed: 0, dryRun: 0 };
+  let updateIndex = 0;
 
   async function maybeUpdate(folder: FolderNode): Promise<void> {
     const freshness = freshnessForFolder(repoRoot, folder, context.sourceFiles, changedGuides);
@@ -31,6 +32,8 @@ export async function runUpdate(cwd = process.cwd(), options: UpdateOptions = {}
       console.log(`${folder.path}: skipped guide with uncommitted changes`);
       return;
     }
+    updateIndex += 1;
+    console.log(`update [${updateIndex}] regenerating ${folder.path}`);
     const result = await generateForFolder(context, folder, provider, config.REPOGUIDE_MAX_FILE_BYTES, { dryRun: options.dryRun, updateExisting: true });
     if (result.status === 'updated') {
       counts.updated += 1;

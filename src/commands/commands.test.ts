@@ -82,6 +82,8 @@ describe('commands', () => {
     expect(initResult.exitCode).toBe(0);
     expect(provider.folders).toEqual(['src/core', 'src', '.']);
     expect(fs.existsSync(`${repo.root}/src/core/guide.md`)).toBe(true);
+    expect(capture.stdout).toContain('init [1/3] creating src/core');
+    expect(capture.stdout).toContain('init [3/3] creating .');
     expect(capture.stdout.at(-1)).toContain('created=3');
 
     repo.commitAll('guides');
@@ -112,6 +114,7 @@ describe('commands', () => {
     updateCapture.restore();
     expect(update.exitCode).toBe(0);
     expect(provider.folders).toEqual(['src']);
+    expect(updateCapture.stdout).toContain('update [1] regenerating src');
     expect(updateCapture.stdout.at(-1)).toContain('updated=1');
 
     repo.write('src/guide.md', 'local edit\n');
@@ -162,6 +165,8 @@ describe('commands', () => {
     const dryRun = await runInit(repo.root, { provider, dryRun: true });
     dryRunCapture.restore();
     expect(dryRun.exitCode).toBe(1);
+    expect(dryRunCapture.stdout).toContain('init [1/4] creating broken');
+    expect(dryRunCapture.stdout).toContain('init [4/4] creating .');
     expect(dryRunCapture.stdout.at(-1)).toContain('dry-run=2');
     expect(dryRunCapture.stdout.at(-1)).toContain('no-guide=1');
     expect(dryRunCapture.stdout.at(-1)).toContain('failed=1');
@@ -196,6 +201,8 @@ describe('commands', () => {
     forceCapture.restore();
     expect(forced.exitCode).toBe(0);
     expect(forceProvider.folders).toEqual(['src', '.']);
+    expect(forceCapture.stdout).toContain('init [1/2] regenerating src');
+    expect(forceCapture.stdout).toContain('init [2/2] regenerating .');
     expect(fs.readFileSync(`${repo.root}/src/guide.md`, 'utf8')).toContain('new');
     expect(forceCapture.stdout.at(-1)).toContain('created=2');
   });
@@ -213,6 +220,7 @@ describe('commands', () => {
     const noGuide = await runUpdate(repo.root, { provider: noGuideProvider });
     noGuideCapture.restore();
     expect(noGuide.exitCode).toBe(0);
+    expect(noGuideCapture.stdout).toContain('update [1] regenerating src');
     expect(noGuideCapture.stdout.join('\n')).toContain('existing guide left unchanged');
     expect(fs.readFileSync(`${repo.root}/src/guide.md`, 'utf8')).toContain('old');
 

@@ -20,8 +20,11 @@ export async function runInit(cwd = process.cwd(), options: InitOptions = {}): P
   const context = buildRepoContext(repoRoot, cwd);
   const provider = options.provider ?? new OpenAIGuideProvider(config);
   const counts = { created: 0, skipped: 0, stale: 0, noGuide: 0, failed: 0, dryRun: 0 };
+  const folders = initPlan(context);
+  const totalGenerations = folders.filter((folder) => options.force || !fs.existsSync(absoluteFromRepo(repoRoot, guidePathForFolder(folder.path)))).length;
+  let generationIndex = 0;
 
-  for (const folder of initPlan(context)) {
+  for (const folder of folders) {
     const guidePath = guidePathForFolder(folder.path);
     const guideExists = fs.existsSync(absoluteFromRepo(repoRoot, guidePath));
     if (guideExists && !options.force) {
@@ -33,6 +36,9 @@ export async function runInit(cwd = process.cwd(), options: InitOptions = {}): P
       }
       continue;
     }
+    generationIndex += 1;
+    const action = guideExists ? 'regenerating' : 'creating';
+    console.log(`init [${generationIndex}/${totalGenerations}] ${action} ${folder.path}`);
     const result = await generateForFolder(context, folder, provider, config.REPOGUIDE_MAX_FILE_BYTES, { dryRun: options.dryRun, updateExisting: guideExists });
     if (result.status === 'created') counts.created += 1;
     if (result.status === 'updated') counts.created += 1;

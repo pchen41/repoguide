@@ -40,3 +40,5 @@ repoguide estimate update
 ```
 
 `init` bootstraps the whole repository bottom-up and skips existing guides unless `--force` is used. `update` works from the current folder scope: the current folder, descendants, and ancestors up to the repo root.
+
+Generation commands print progress as each folder is sent to the provider, for example `init [1/8] creating src/core` or `update [1] regenerating src`.

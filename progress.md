@@ -13,6 +13,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Fifth pass added real local submodule, CRLF/LF no-diff freshness, CLI main error/help, and README command example tests.
 - Sixth pass tuned guide prompting away from file inventories and toward internal wiki guidance.
 - Seventh pass added `repoguide init --force` for regenerating existing guides.
+- Eighth pass added generation progress messages for `init` and `update`.
 - 100% coverage enforcement is intentionally skipped for now per user direction; coverage still reports current percentages.
 
 ## Task Progress
@@ -48,6 +49,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Fifth pass added tests for real local submodule gitlinks, CRLF/LF rewrites when Git reports no diff, CLI `main()` help/unknown/outside-repo paths, and README command examples.
 - Sixth pass updated prompt guidance to discourage obvious conventional-file descriptions and ask for responsibilities, boundaries, contracts, workflows, invariants, gotchas, and maintenance advice.
 - Seventh pass added `init --force`, README/help coverage, and command tests proving default init still skips existing guides while force regenerates them.
+- Eighth pass added progress output before provider calls, including bounded `init [i/n]` messages and incremental `update [i]` messages.
 - Remaining work: 100% coverage enforcement remains intentionally skipped; extra hardening could include malformed `.env` behavior if Node exposes stricter parse errors, more README output wording assertions, and additional large-repo performance fixtures.
 - Coverage command now reports but does not enforce 100% thresholds, by user request.
 
@@ -63,6 +65,19 @@ Result:
 done
 Follow-ups:
 None for scaffold.
+
+Task:
+Tasks 8 and 10: `init` and `update`
+Status:
+mostly done / progress output added
+Files changed:
+src/commands/init.ts, src/commands/update.ts, src/commands/commands.test.ts, README.md, progress.md
+Tests run:
+npm run build; npm test; npm run coverage; npm_config_cache=/private/tmp/repoguide-npm-cache npm pack --dry-run
+Result:
+generation commands now print progress before each provider call
+Follow-ups:
+Consider a richer spinner or elapsed-time output later if needed.
 
 Task:
 Tasks 8 and 12: `init` and Packaging Docs
