@@ -29,11 +29,25 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 
 ## Completed
 
-- Created `tasks.md`.
-- Created this progress tracker.
+- None.
 
 ## Handoff Notes
 
 - Start with Task 1.
 - When starting work, mark one task as in flight.
 - When finishing a task, record what changed, tests run, and any follow-up needed.
+
+## Update Template
+
+Use this format when updating task progress:
+
+```txt
+Task:
+Status:
+Files changed:
+Tests run:
+Result:
+Follow-ups:
+```
+
+Use `Result:` for a concise outcome such as done, partial, or blocked plus the reason.
