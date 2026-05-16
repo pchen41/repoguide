@@ -81,6 +81,7 @@ function parseNumstatPaths(raw: string): Set<string> {
   const tokens = raw.split('\0').filter(Boolean);
   for (const token of tokens) {
     const parts = token.split('\t');
+    if (parts[0] === '0' && parts[1] === '0') continue;
     const maybePath = parts.length >= 3 ? parts.slice(2).join('\t') : token;
     if (!maybePath || maybePath.includes('\t')) continue;
     assertNoNewlinePath(maybePath);

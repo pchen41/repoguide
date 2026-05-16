@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { loadGuideIgnore } from './guideignore.js';
 import { listTrackedEntries } from './git.js';
@@ -30,7 +31,9 @@ export function buildRepoContext(repoRoot: string, cwd: string): RepoContext {
 }
 
 export function repoRelativeFolder(repoRoot: string, cwd: string): string {
-  const relative = toPosixPath(path.relative(repoRoot, cwd));
+  const realRepoRoot = fs.realpathSync.native(repoRoot);
+  const realCwd = fs.realpathSync.native(cwd);
+  const relative = toPosixPath(path.relative(realRepoRoot, realCwd));
   return normalizeRepoPath(relative || '.');
 }
 

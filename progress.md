@@ -7,19 +7,20 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Planning is complete.
 - Initial implementation pass is complete.
 - TypeScript CLI package, core modules, command handlers, README, and focused tests exist.
+- Second pass added fixture-backed Git, freshness, command, and OpenAI provider tests.
 - 100% coverage enforcement is intentionally skipped for now per user direction; coverage still reports current percentages.
 
 ## Task Progress
 
 - Task 1: Project Scaffold - done.
 - Task 2: Environment Configuration - partial.
-- Task 3: Git Utilities - partial.
+- Task 3: Git Utilities - mostly done.
 - Task 4: `.guideignore` - partial.
 - Task 5: Folder Tree - partial.
-- Task 6: LLM Provider Interface and OpenAI - partial.
+- Task 6: LLM Provider Interface and OpenAI - mostly done.
 - Task 7: Prompting and Guide Validation - partial.
 - Task 8: `init` - partial.
-- Task 9: Git-Based Freshness and `check` - partial.
+- Task 9: Git-Based Freshness and `check` - mostly done.
 - Task 10: `update` - partial.
 - Task 11: `estimate init` and `estimate update` - partial.
 - Task 12: Integration, Coverage, and Packaging - partial.
@@ -36,7 +37,8 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 
 - Initial implementation includes package scaffold, CLI registration, env loading, Git utilities, `.guideignore`, folder tree, OpenAI provider, prompt builder, guide validation, init/check/update/estimate commands, README, and focused unit tests.
 - External reviews were run with Codex, Claude, and Gemini. Accepted fixes included safer guide writes, better update no-guide reporting, init stale-guide reporting, estimate scope alignment, less aggressive secret redaction, prompt budget improvements, and Git rename/delete path handling.
-- Remaining work: broaden integration/unit coverage, fully exercise Git edge cases, refine mode-only freshness detection, add OpenAI provider retry/timeout tests, and harden prompt budget priority with more fixtures.
+- Second pass added tests for repo root detection, tracked/untracked files, paths with spaces, staged/unstaged changes, renames, deletes, mode-only changes, missing/no-history guides, ignored freshness, child guide staleness, command init/check/update/estimate flows, OpenAI request shape, no-guide parsing, retry, timeout, and config validation.
+- Remaining work: broaden `.guideignore`, folder tree, prompt truncation, dry-run/no-guide/failure command integration tests; cover path-newline failure, submodules, invalid UTF-8, binary prompt notes, CRLF/LF fixtures, detached HEAD, empty repos, and README example assertions.
 - Coverage command now reports but does not enforce 100% thresholds, by user request.
 
 Task:
@@ -51,6 +53,19 @@ Result:
 done
 Follow-ups:
 None for scaffold.
+
+Task:
+Tasks 3, 6, 8, 9, 10, 11
+Status:
+mostly done / better verified
+Files changed:
+src/core/git.ts, src/core/plans.ts, src/core/git.test.ts, src/core/stale.test.ts, src/commands/commands.test.ts, src/llm/openai.test.ts, src/test-utils/fixture-repo.ts
+Tests run:
+npm run build; npm test; npm run coverage; npm_config_cache=/private/tmp/repoguide-npm-cache npm pack --dry-run
+Result:
+done for this pass; coverage rose to about 81% statements and key Git/freshness/provider behavior is covered
+Follow-ups:
+Add remaining fixtures listed in Handoff Notes before calling Tasks 2-12 fully complete.
 
 Task:
 Tasks 2-12
