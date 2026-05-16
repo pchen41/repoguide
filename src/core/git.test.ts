@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createFixtureRepo, type FixtureRepo } from '../test-utils/fixture-repo.js';
-import { diffNameStatus, findRepoRoot, isInsideGitRepo, latestCommitForPath, listTrackedEntries, listTrackedFiles, stagedChanges, unstagedChanges } from './git.js';
+import { diffNameStatus, findRepoRoot, hasHead, isInsideGitRepo, latestCommitForPath, listTrackedEntries, listTrackedFiles, stagedChanges, unstagedChanges } from './git.js';
 
 let repo: FixtureRepo | undefined;
 let tempDirs: string[] = [];
@@ -67,5 +67,21 @@ describe('git utilities', () => {
     const changes = diffNameStatus(repo.root, `${base}..HEAD`);
     expect(changes.some((change) => change.status.startsWith('R') && change.oldPath === 'script.sh' && change.path === 'renamed script.sh')).toBe(true);
     expect(changes.some((change) => change.status === 'D' && change.path === 'b.txt')).toBe(true);
+  });
+
+  it('handles empty repos, detached HEAD, and unsupported newline paths intentionally', () => {
+    repo = createFixtureRepo();
+    expect(hasHead(repo.root)).toBe(false);
+    expect(diffNameStatus(repo.root, 'HEAD..HEAD')).toEqual([]);
+
+    repo.write('a.txt', 'a\n');
+    repo.commitAll('initial');
+    repo.git(['checkout', '--detach', 'HEAD']);
+    expect(latestCommitForPath(repo.root, 'a.txt')).toMatch(/[0-9a-f]{40}/);
+
+    repo.git(['checkout', 'main']);
+    repo.write('bad\nname.txt', 'bad\n');
+    repo.git(['add', 'bad\nname.txt']);
+    expect(() => listTrackedEntries(repo.root)).toThrow(/newline/);
   });
 });

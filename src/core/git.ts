@@ -57,6 +57,7 @@ export function listTrackedEntries(repoRoot: string): GitEntry[] {
   });
   const chunks = raw.toString('utf8').split('\0').filter(Boolean);
   return chunks.map((chunk) => {
+    assertNoNewlinePath(chunk);
     const match = /^(\d+)\s+([0-9a-f]+)\s+(\d)\t(.+)$/.exec(chunk);
     if (!match) throw new RepoGuideError(`Unable to parse git ls-files entry: ${chunk}`);
     const [, mode, object, stage, rawPath] = match;

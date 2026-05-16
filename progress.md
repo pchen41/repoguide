@@ -9,6 +9,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - TypeScript CLI package, core modules, command handlers, README, and focused tests exist.
 - Second pass added fixture-backed Git, freshness, command, and OpenAI provider tests.
 - Third pass added prompt, guide generation, `.guideignore`, env, and tree edge-case tests.
+- Fourth pass added empty repo, detached HEAD, newline path, init dry-run/no-guide/failure, and update no-guide/dry-run tests.
 - 100% coverage enforcement is intentionally skipped for now per user direction; coverage still reports current percentages.
 
 ## Task Progress
@@ -40,7 +41,8 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - External reviews were run with Codex, Claude, and Gemini. Accepted fixes included safer guide writes, better update no-guide reporting, init stale-guide reporting, estimate scope alignment, less aggressive secret redaction, prompt budget improvements, and Git rename/delete path handling.
 - Second pass added tests for repo root detection, tracked/untracked files, paths with spaces, staged/unstaged changes, renames, deletes, mode-only changes, missing/no-history guides, ignored freshness, child guide staleness, command init/check/update/estimate flows, OpenAI request shape, no-guide parsing, retry, timeout, and config validation.
 - Third pass added tests for prompt binary/invalid UTF-8/submodule/truncation notes, guide generation dry-run/no-guide/failure/symlink refusal, tree ancestor/guide helpers, `.guideignore` comments/exact paths, and non-LLM env loading.
-- Remaining work: cover path-newline failure, real submodule fixtures, CRLF/LF fixtures, detached HEAD, empty repos, README example assertions, and more command dry-run/no-guide/failure integration cases.
+- Fourth pass added tests for empty repos, detached HEAD, unsupported newline paths, init dry-run/no-guide/provider failure reporting, and update no-guide/dry-run preservation.
+- Remaining work: cover real submodule fixtures, CRLF/LF fixtures, README example assertions, and additional CLI `main()` error-path tests.
 - Coverage command now reports but does not enforce 100% thresholds, by user request.
 
 Task:
@@ -55,6 +57,19 @@ Result:
 done
 Follow-ups:
 None for scaffold.
+
+Task:
+Tasks 3, 8, 10, 12
+Status:
+mostly done / better verified
+Files changed:
+src/core/git.ts, src/core/git.test.ts, src/commands/commands.test.ts, progress.md
+Tests run:
+npm run build; npm test; npm run coverage; npm_config_cache=/private/tmp/repoguide-npm-cache npm pack --dry-run
+Result:
+done for this pass; 41 tests pass and coverage is about 89% statements / 90% lines
+Follow-ups:
+Add remaining fixtures listed in Handoff Notes before calling Tasks 2-12 fully complete.
 
 Task:
 Tasks 4, 5, 7, 8, 12

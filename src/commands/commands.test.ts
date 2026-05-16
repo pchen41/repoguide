@@ -141,4 +141,56 @@ describe('commands', () => {
     updateCapture.restore();
     expect(updateCapture.stdout).toContain('folder_count=1');
   });
+
+  it('reports init dry-run, no-guide, and provider failures without writing guides', async () => {
+    snapshotEnv();
+    repo = createFixtureRepo();
+    repo.write('src/a.ts', 'a\n');
+    repo.write('docs/readme.md', 'docs\n');
+    repo.write('broken/file.txt', 'broken\n');
+    repo.commitAll('source');
+    const provider = new FakeProvider({
+      src: { type: 'no-guide' },
+      docs: {
+        type: 'guide',
+        markdown: '# docs\n\n## Responsibility\n\n## Important Files\n\n## Child Modules\n\n## Notes\n'
+      },
+      broken: { type: 'error', message: 'provider failed' }
+    });
+
+    const dryRunCapture = captureConsole();
+    const dryRun = await runInit(repo.root, { provider, dryRun: true });
+    dryRunCapture.restore();
+    expect(dryRun.exitCode).toBe(1);
+    expect(dryRunCapture.stdout.at(-1)).toContain('dry-run=2');
+    expect(dryRunCapture.stdout.at(-1)).toContain('no-guide=1');
+    expect(dryRunCapture.stdout.at(-1)).toContain('failed=1');
+    expect(dryRunCapture.stderr.join('\n')).toContain('provider failed');
+    expect(fs.existsSync(`${repo.root}/docs/guide.md`)).toBe(false);
+  });
+
+  it('reports update no-guide and dry-run without overwriting guides', async () => {
+    snapshotEnv();
+    repo = createFixtureRepo();
+    repo.write('src/a.ts', 'a\n');
+    repo.write('src/guide.md', '# src\n\n## Responsibility\nold\n\n## Important Files\n\n## Child Modules\n\n## Notes\n');
+    repo.commitAll('initial');
+    repo.write('src/a.ts', 'changed\n');
+
+    const noGuideProvider = new FakeProvider({ src: { type: 'no-guide' } });
+    const noGuideCapture = captureConsole();
+    const noGuide = await runUpdate(repo.root, { provider: noGuideProvider });
+    noGuideCapture.restore();
+    expect(noGuide.exitCode).toBe(0);
+    expect(noGuideCapture.stdout.join('\n')).toContain('existing guide left unchanged');
+    expect(fs.readFileSync(`${repo.root}/src/guide.md`, 'utf8')).toContain('old');
+
+    const dryProvider = new FakeProvider();
+    const dryCapture = captureConsole();
+    const dry = await runUpdate(repo.root, { provider: dryProvider, dryRun: true });
+    dryCapture.restore();
+    expect(dry.exitCode).toBe(0);
+    expect(dryCapture.stdout.at(-1)).toContain('dry-run=1');
+    expect(fs.readFileSync(`${repo.root}/src/guide.md`, 'utf8')).toContain('old');
+  });
 });
