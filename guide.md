@@ -2,29 +2,73 @@
 
 ## Responsibility
 
-The repository root defines the `repoguide` TypeScript CLI package: project metadata, build/test configuration, user-facing documentation, and implementation planning. The CLI generates committed `guide.md` files for Git repository folders, using Git state, `.guideignore`, prompt construction, and an LLM provider to create or update lightweight wiki pages.
+This repository is the `repoguide` TypeScript CLI package. Its job is to generate committed `guide.md` wiki pages for folders in Git repositories, using Git-tracked source context, `.guideignore` filtering, prompt construction, and an LLM provider.
+
+The repository root owns package-level concerns:
+
+- npm package metadata, binary wiring, Node/TypeScript/Vitest configuration, and lockfile state.
+- User-facing product documentation in `README.md`.
+- Agent/developer workflow state in `tasks.md` and `progress.md`.
+- The `src` implementation tree, which owns all runtime CLI behavior.
+
+The main development flow is:
+
+1. Read `tasks.md` for the product/architecture contract.
+2. Inspect `progress.md` for what has already been implemented or intentionally deferred.
+3. Change implementation under `src`.
+4. Run `npm run build`, `npm test`, and usually `npm run coverage`.
+5. Update `progress.md` when task status changes.
 
 ## Important Files
 
-- `README.md` — User-facing overview with setup instructions, `.env` configuration example, `.guideignore` example, and documented commands: `repoguide init`, `repoguide check`, `repoguide update`, `repoguide estimate init`, and `repoguide estimate update`.
-- `package.json` — npm package definition for `repoguide`, including the `repoguide` binary at `dist/cli.js`, Node `26.x` engine requirement, scripts for build/test/coverage/pack smoke tests, and runtime/dev dependencies.
-- `package-lock.json` — Locked npm dependency graph for reproducible installs.
-- `tsconfig.json` — TypeScript compiler configuration targeting ES2024 with `NodeNext` modules, strict type checking, declarations, source maps, and `dist` output.
-- `vitest.config.ts` — Vitest configuration for `src/**/*.test.ts` tests and V8 coverage collection over `src/**/*.ts`.
-- `tasks.md` — Full implementation brief and product specification, including command behavior, environment handling, Git rules, prompting rules, freshness logic, tests, and post-v1 ideas.
-- `progress.md` — Current implementation status and handoff notes. Update this when task status changes.
-- `AGENTS.md` — Agent-specific instructions, including the requirement to read `tasks.md` before implementation and update `progress.md` when changing task status.
-- `.gitignore` — Standard Node/TypeScript ignore rules for logs, caches, environment files, build outputs, dependency folders, and Vite artifacts.
+- `tasks.md`  
+  The authoritative implementation brief. It defines product behavior, command scopes, exit-code contracts, Git freshness rules, prompt requirements, no-guide semantics, environment behavior, and the intended module layout. Treat it as the spec when code and docs are ambiguous.
+
+- `progress.md`  
+  The handoff log for implementation passes. It records which task areas are done, mostly done, or intentionally not finished. Update it when changing task status or making notable implementation decisions; do not treat it as user documentation.
+
+- `AGENTS.md`  
+  Operational notes for coding agents. It explicitly instructs agents to read `tasks.md` before implementation and to update `progress.md` when changing task status. It also documents how to invoke other headless agents without nesting Claude Code sessions.
+
+- `package.json`  
+  Defines the shipped CLI package contract: package name `repoguide`, binary path `./dist/cli.js`, Node engine `26.x`, ESM mode, scripts, and published files. The `bin` path assumes `npm run build` has emitted `dist/cli.js`.
+
+- `README.md`  
+  User-facing usage contract. Tests in `src/readme.test.ts` check command examples against the actual CLI, so command-surface changes should update `README.md` and tests together.
+
+- `tsconfig.json`  
+  Builds only production TypeScript from `src` into `dist`, excluding tests and `src/test-utils`. It uses `NodeNext` module semantics and strict checking; changes here can affect emitted package shape and CLI import behavior.
+
+- `vitest.config.ts`  
+  Centralizes test discovery and coverage inclusion. Coverage currently reports over `src/**/*.ts` while excluding tests, declarations, and test utilities; `progress.md` notes that 100% enforcement is intentionally skipped for now.
 
 ## Child Modules
 
-- `src` — Contains the TypeScript implementation, tests, and internal modules for the CLI, command workflows, configuration, Git utilities, prompt and guide generation, LLM providers, and test fixtures.
+- `src`  
+  Runtime implementation and tests for the CLI. Go here for all behavior changes: command orchestration, Git utilities, `.guideignore`, folder planning, freshness checks, prompt generation, guide validation/writes, configuration loading, and LLM providers. The root should remain package/documentation/configuration glue rather than owning runtime logic.
 
 ## Notes
 
-- Read `tasks.md` before making implementation changes; it is the authoritative product and architecture brief.
-- Update `progress.md` whenever task status changes or implementation work is handed off.
-- The package targets Node.js `26.x`; avoid adding dependencies or APIs that conflict with that runtime target.
-- Build output is generated into `dist` and is intentionally not part of the source tree.
-- `guide.md` files are committed documentation artifacts for repository navigation; source prompts exclude generated guides except when parent prompts use child guide contents.
-- `.guideignore` is supported by the tool but is not present in this repository root.
+- Target Node is `26.x`. The code and docs intentionally rely on Node’s built-in `.env` loading rather than `dotenv`.
+
+- `guide.md` is a generated-but-committed artifact in target repositories, but this repository’s own guide files are documentation for maintainers. Do not add generated metadata to guides; Git history is the freshness source of truth.
+
+- The no-guide sentinel is exact and internal: `__REPOGUIDE_NO_GUIDE__`. It is specified in `tasks.md` and centralized in code under `src/constants.ts`; avoid duplicating or reconfiguring it casually.
+
+- `package-lock.json` is large and should be kept in sync with `package.json`. It is not useful prompt context for guide generation beyond dependency locking.
+
+- The expected verification loop is:
+  - `npm run build`
+  - `npm test`
+  - `npm run coverage`
+  - `npm_config_cache=/private/tmp/repoguide-npm-cache npm pack --dry-run` when packaging behavior changes
+
+- Command behavior is tightly specified, especially exit codes and scope differences:
+  - `init` bootstraps missing guides bottom-up and skips existing guides unless `--force` is used.
+  - `update` works from current-folder scope, handling descendants and ancestors.
+  - `check` reports missing/stale guides and uses exit `1` for attention needed.
+  - `estimate` commands must not require API keys and should share prompt/planning paths with real generation.
+
+- Keep README command examples synchronized with the registered CLI. The test suite intentionally guards against documentation drift.
+
+- `.gitignore` excludes normal Node/build/test artifacts including `dist`, coverage, caches, `.env`, and Vite/Vitest state. `.env.example` is explicitly allowed if added later.
