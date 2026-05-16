@@ -1,6 +1,6 @@
 # repoguide Tasks
 
-This file is the implementation brief for `repoguide`, a TypeScript CLI that creates and updates `guide.md` files in Git repositories. It should be enough for an AI agent to read this file with no prior chat context and start building.
+This file is the implementation brief for `repoguide`, a TypeScript CLI that creates and updates `guide.md` files in Git repositories. It should be enough for an AI agent to read this file with no prior chat context and start building. Make commits when appropriate (probably after each task, but maybe some tasks should be multiple commits).
 
 ## Product Spec
 
