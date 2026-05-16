@@ -56,4 +56,13 @@ describe('environment config', () => {
     expect(() => loadConfig(repo.root)).toThrow(/Invalid repoguide environment/);
     expect(() => loadConfig(repo.root)).not.toThrow(/secret-value/);
   });
+
+  it('does not require LLM settings until LLM config is asserted', () => {
+    snapshotEnv();
+    for (const key of keys) delete process.env[key];
+    repo = createFixtureRepo();
+    const { config } = loadConfig(repo.root);
+    expect(config.OPENAI_API_KEY).toBeUndefined();
+    expect(config.REPOGUIDE_MODEL).toBeUndefined();
+  });
 });

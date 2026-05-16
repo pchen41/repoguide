@@ -41,4 +41,27 @@ describe('prompt builder', () => {
     expect(result.skippedNotes.join('\n')).toContain('src/link skipped: symlink');
     expect(result.characterCount).toBeLessThanOrEqual(1200);
   });
+
+  it('reports binary, invalid UTF-8, submodule, and aggregate truncation notes deterministically', () => {
+    repo = createFixtureRepo();
+    repo.write('src/binary.dat', Buffer.from([0, 1, 2]));
+    repo.write('src/invalid.txt', Buffer.from([0xc3, 0x28]));
+    repo.write('src/long.txt', `${'x'.repeat(200)}\n`);
+    const entries = [entry('src/binary.dat'), entry('src/invalid.txt'), entry('src/vendor-lib', '160000'), entry('src/long.txt')];
+    const tree = buildFolderTree(['src/binary.dat', 'src/invalid.txt', 'src/vendor-lib', 'src/long.txt'], entries);
+    const result = buildGuidePrompt({
+      repoRoot: repo.root,
+      folder: tree.nodes.get('src')!,
+      tree,
+      gitEntries: new Map(entries.map((item) => [item.path, item])),
+      maxFileBytes: 1000,
+      promptBudgetChars: 620
+    });
+
+    expect(result.skippedNotes).toContain('src/binary.dat skipped: binary file.');
+    expect(result.skippedNotes).toContain('src/invalid.txt skipped: invalid UTF-8.');
+    expect(result.skippedNotes).toContain('src/vendor-lib skipped: submodule gitlink.');
+    expect(result.truncatedNotes.some((note) => note.includes('file src/long.txt'))).toBe(true);
+    expect(result.characterCount).toBeLessThanOrEqual(620);
+  });
 });

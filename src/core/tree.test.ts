@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildFolderTree, deepestFirst, descendants, rootFirst } from './tree.js';
+import { ancestors, buildFolderTree, deepestFirst, descendants, folderHasGuide, guidePath, rootFirst } from './tree.js';
 import type { GitEntry } from './git.js';
 
 function entry(path: string): GitEntry {
@@ -15,5 +15,14 @@ describe('folder tree', () => {
     expect(rootFirst(tree).map((node) => node.path)).toEqual(['.', 'src', 'src/core']);
     expect(deepestFirst(tree).map((node) => node.path)).toEqual(['src/core', 'src', '.']);
     expect(descendants(tree, 'src').map((node) => node.path)).toEqual(['src', 'src/core']);
+    expect(ancestors(tree, 'src/core').map((node) => node.path)).toEqual(['.', 'src', 'src/core']);
+    expect(folderHasGuide(tree.nodes.get('src/core')!)).toBe(true);
+    expect(guidePath(tree.nodes.get('src/core')!)).toBe('src/core/guide.md');
+  });
+
+  it('keeps folders with existing guides even without eligible source files', () => {
+    const tree = buildFolderTree([], [entry('docs/guide.md')]);
+    expect(rootFirst(tree).map((node) => node.path)).toEqual(['.', 'docs']);
+    expect(tree.nodes.get('docs')?.hasGuide).toBe(true);
   });
 });

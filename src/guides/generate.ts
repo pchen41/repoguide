@@ -54,8 +54,13 @@ export async function generateForFolder(
 
 export function assertCanWriteGuide(repoRoot: string, folder: FolderNode): void {
   const absoluteGuide = absoluteFromRepo(repoRoot, guidePathForFolder(folder.path));
-  if (!fs.existsSync(absoluteGuide)) return;
-  const stat = fs.lstatSync(absoluteGuide);
+  let stat: fs.Stats;
+  try {
+    stat = fs.lstatSync(absoluteGuide);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && (error as { code?: unknown }).code === 'ENOENT') return;
+    throw error;
+  }
   if (stat.isSymbolicLink()) throw new RepoGuideError(`${guidePathForFolder(folder.path)} is a symlink; refusing to write it.`);
   if (!stat.isFile()) throw new RepoGuideError(`${guidePathForFolder(folder.path)} exists but is not a regular file.`);
 }

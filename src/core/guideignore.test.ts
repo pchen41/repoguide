@@ -25,8 +25,8 @@ describe('.guideignore', () => {
 
   it('applies gitignore patterns and negation order', () => {
     const root = tempDir();
-    fs.writeFileSync(path.join(root, '.guideignore'), 'dist/\n*.snap\n!keep.snap\n');
+    fs.writeFileSync(path.join(root, '.guideignore'), '# build outputs\n\ndist/\n*.snap\n!keep.snap\nexact.txt\n');
     const ig = loadGuideIgnore(root);
-    expect(ig.filterSourceFiles(['dist/app.js', 'a.snap', 'keep.snap', 'src/app.ts'])).toEqual(['keep.snap', 'src/app.ts']);
+    expect(ig.filterSourceFiles(['dist/app.js', 'a.snap', 'keep.snap', 'exact.txt', 'src/app.ts'])).toEqual(['keep.snap', 'src/app.ts']);
   });
 });
