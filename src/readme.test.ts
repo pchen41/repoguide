@@ -5,7 +5,8 @@ import { buildProgram } from './cli.js';
 describe('README examples', () => {
   it('lists commands that are registered in the CLI', () => {
     const readme = fs.readFileSync('README.md', 'utf8');
-    const commands = [...readme.matchAll(/^repoguide (.+)$/gm)].map((match) => match[1]);
+    const commandBlock = readme.match(/## Commands\n\n```sh\n(?<commands>[\s\S]+?)\n```/)?.groups?.commands ?? '';
+    const commands = commandBlock.split('\n').map((line) => line.replace(/^repoguide\s+/, ''));
     const help = buildProgram().helpInformation();
 
     expect(commands).toEqual(['init', 'init --force', 'check', 'update', 'estimate init', 'estimate update']);

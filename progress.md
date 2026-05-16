@@ -15,6 +15,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Seventh pass added `repoguide init --force` for regenerating existing guides.
 - Eighth pass added generation progress messages for `init` and `update`.
 - Ninth pass loosened guide validation and prompting from a fixed template to a free-form wiki page with a minimal heading/section contract.
+- Tenth pass rewrote the README for a public GitHub audience.
 - 100% coverage enforcement is intentionally skipped for now per user direction; coverage still reports current percentages.
 
 ## Task Progress
@@ -52,8 +53,22 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Seventh pass added `init --force`, README/help coverage, and command tests proving default init still skips existing guides while force regenerates them.
 - Eighth pass added progress output before provider calls, including bounded `init [i/n]` messages and incremental `update [i]` messages.
 - Ninth pass replaced the fixed required-section guide template with flexible wiki sections while retaining exact top-heading validation and requiring at least one `##` section.
+- Tenth pass expanded README positioning, setup, command behavior, guide style, privacy/source-input notes, exit codes, and development workflow for public GitHub readers.
 - Remaining work: 100% coverage enforcement remains intentionally skipped; extra hardening could include malformed `.env` behavior if Node exposes stricter parse errors, more README output wording assertions, and additional large-repo performance fixtures.
 - Coverage command now reports but does not enforce 100% thresholds, by user request.
+
+Task:
+Task 12: Integration, Coverage, and Packaging
+Status:
+mostly done / README public polish
+Files changed:
+README.md, src/readme.test.ts, progress.md
+Tests run:
+npm run build; npm test; npm_config_cache=/private/tmp/repoguide-npm-cache npm run pack:smoke
+Result:
+public-facing README rewritten with clearer install, workflow, command, guide-style, privacy, exit-code, and development sections
+Follow-ups:
+None yet.
 
 Task:
 Task 1: Project Scaffold
