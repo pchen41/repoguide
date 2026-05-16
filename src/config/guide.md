@@ -1,45 +1,75 @@
 # src/config
 
-## Responsibility
+## How This Fits
 
-`src/config` owns runtime configuration loading and validation for RepoGuide. It converts the process environment plus an optional repository-local `.env` file into a typed `RepoGuideConfig`, and separates “general config can be loaded” from “LLM generation is allowed”.
+`src/config` is the runtime configuration boundary for RepoGuide. Code outside this folder should treat configuration as a parsed, typed `RepoGuideConfig` rather than reading raw environment variables directly.
 
-The main control flow is:
+The main entry point is `loadConfig(cwd)`, which:
 
-1. `loadConfig(cwd)` resolves the Git repository root via `src/core/git.ts`.
-2. It looks for `.env` at that repo root, not necessarily at the current working directory.
-3. It loads `.env` values into `process.env` using Node’s `loadEnvFile`.
-4. It restores pre-existing shell values for known RepoGuide keys so shell environment takes precedence over `.env`.
-5. It validates/coerces config through the Zod schema in `schema.ts`.
-6. Callers that actually need model access must separately call `assertLlmConfig(config)`.
+1. Resolves the Git repository root using `findRepoRoot` from `src/core/git.js`.
+2. Looks for a repo-local `.env` file at that root.
+3. Loads `.env` values into `process.env`.
+4. Restores shell-provided values so the caller’s environment takes precedence over `.env`.
+5. Validates and normalizes the resulting environment through the Zod schema in `src/config/schema.ts`.
+6. Returns both the parsed config and resolved `repoRoot`.
 
-This folder should stay limited to configuration parsing, defaults, validation, and safety checks. It should not decide command behavior, perform API calls, or inspect repository contents beyond resolving the repo root and reading `.env`.
+This means callers get two pieces of state that are intentionally coupled: the configuration and the repository root used to locate `.env`.
 
-## Important Files
+## Configuration Contracts
 
-- `src/config/env.ts`  
-  Central entry point for consumers. `loadConfig()` returns both parsed config and the resolved repo root. It intentionally mutates `process.env` only as needed to load `.env`, then restores shell-provided values for RepoGuide-specific keys. It also redacts `OPENAI_API_KEY` from error messages. `assertLlmConfig()` is deliberately separate so commands that do not need an LLM can run without `OPENAI_API_KEY` or `REPOGUIDE_MODEL`.
+The schema in `src/config/schema.ts` defines the supported environment surface:
 
-- `src/config/schema.ts`  
-  Defines the config contract and defaults. `REPOGUIDE_MAX_FILE_BYTES` is coerced from strings, must be a positive integer, and defaults to `DEFAULT_MAX_FILE_BYTES` from `src/constants.ts`. Adding a new environment variable usually requires updating this schema and the relevant env snapshot/restore list in `env.ts`.
+- `OPENAI_API_KEY`
+- `REPOGUIDE_PROVIDER`
+- `REPOGUIDE_MODEL`
+- `REPOGUIDE_MAX_FILE_BYTES`
 
-- `src/config/env.test.ts`  
-  Documents important behavior around `.env` loading, shell precedence, secret redaction, and delayed LLM validation. Update these tests when changing config precedence or validation semantics.
+Important invariants:
 
-## Child Modules
+- `REPOGUIDE_PROVIDER` defaults to `openai`.
+- `REPOGUIDE_MAX_FILE_BYTES` is coerced to a positive integer and defaults to `DEFAULT_MAX_FILE_BYTES` from `src/constants.js`.
+- LLM credentials and model are optional at load time.
+- LLM credentials and model become required only when `assertLlmConfig(config)` is called.
 
-None.
+That split is deliberate. Non-generation workflows should be able to load config without requiring secrets.
 
-## Notes
+## Shell vs `.env` Precedence
 
-- `.env` is resolved from the Git repo root returned by `findRepoRoot(cwd)`. If code passes a nested working directory, config still comes from the repository-level `.env`.
+`loadConfig` uses Node’s `loadEnvFile`, which mutates `process.env`. To keep expected CLI behavior, this folder preserves shell precedence manually:
 
-- Shell environment must win over `.env`. This is enforced by snapshotting known RepoGuide env keys before loading `.env` and restoring shell values afterward.
+- Existing shell values for relevant keys are snapshotted before loading `.env`.
+- After `.env` loading, shell values are restored.
+- Values missing from the shell may still be supplied by `.env`.
 
-- Keep `RELEVANT_ENV` in `src/config/env.ts` in sync with environment variables that may be loaded from `.env` and need shell precedence preservation. If a new key is added to `schema.ts` but not to `RELEVANT_ENV`, `.env` may unexpectedly override a shell value for that key.
+When changing config keys, update the relevant-key handling in `src/config/env.ts`; otherwise shell precedence and cleanup behavior may silently diverge from schema behavior.
 
-- `loadConfig()` should remain safe for non-generation commands. Do not make `OPENAI_API_KEY` or `REPOGUIDE_MODEL` required in `envSchema`; require them only in `assertLlmConfig()`.
+## Error Handling and Secret Redaction
 
-- Error messages must not leak secrets. Any new validation or `.env` loading errors that include environment-derived values should pass through the existing redaction path or equivalent protection.
+Configuration failures are wrapped in `RepoGuideError` from `src/core/errors.js`.
 
-- Tests mutate `process.env`; preserve snapshot/restore behavior in tests to avoid cross-test contamination.
+`src/config/env.ts` redacts `OPENAI_API_KEY` from error messages before throwing. Keep this property intact when modifying validation or `.env` loading paths. Tests assert that invalid environment errors do not leak secret values.
+
+The redaction currently only targets `OPENAI_API_KEY`, so adding new secret-bearing config keys should include corresponding redaction behavior.
+
+## When to Use `assertLlmConfig`
+
+Use `loadConfig` when a command needs general repository/config context.
+
+Use `assertLlmConfig(config)` only at the boundary where guide generation actually needs an LLM provider. This keeps validation user-friendly:
+
+- Commands that inspect files or compute repo context can run without API keys.
+- Generation fails early with clear errors if provider, key, or model settings are missing or unsupported.
+
+`assertLlmConfig` currently enforces that only `openai` is supported. If adding providers, this function is the enforcement point that must change alongside schema and generation code.
+
+## Testing Notes
+
+`src/config/env.test.ts` is the regression suite for the main contracts:
+
+- Defaults load without LLM secrets.
+- `.env` values are honored.
+- Shell environment values override `.env`.
+- Invalid values throw `RepoGuideError`-style messages without exposing secrets.
+- LLM-specific fields are not required until `assertLlmConfig`.
+
+Tests mutate `process.env`, so they snapshot and restore known keys after each case. If new config keys are added, extend that test key list to avoid cross-test contamination.
