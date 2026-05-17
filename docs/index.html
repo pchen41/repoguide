@@ -1,0 +1,1134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Wiki</title>
+  <style>
+:root {
+  color-scheme: light;
+  --bg: #f7f9fb;
+  --panel: #ffffff;
+  --text: #18202a;
+  --muted: #637083;
+  --line: #d9e1e8;
+  --accent: #0b7a75;
+  --accent-strong: #7b3f8c;
+  --code: #eef4f7;
+  --shadow: 0 18px 50px rgba(24, 32, 42, 0.10);
+}
+
+body.dark {
+  color-scheme: dark;
+  --bg: #121315;
+  --panel: #1d2024;
+  --text: #f0f3f5;
+  --muted: #a9b3bd;
+  --line: #353b43;
+  --accent: #67d2c7;
+  --accent-strong: #e0a8f2;
+  --code: #262b31;
+  --shadow: 0 18px 55px rgba(0, 0, 0, 0.28);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  padding: 28px;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  line-height: 1.15;
+}
+
+h1 { font-size: 2.1rem; }
+
+.icon-button {
+  min-width: 64px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.search-label {
+  display: block;
+  margin-top: 28px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.search {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0 18px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.guide-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.nav-link {
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: var(--bg);
+  border-color: var(--line);
+}
+
+.nav-link.active {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.nav-title,
+.nav-path {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.nav-title { font-weight: 800; }
+
+.nav-path {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.content {
+  max-width: 1040px;
+  width: 100%;
+  padding: 48px min(7vw, 84px);
+}
+
+.guide-page {
+  display: none;
+  outline: none;
+}
+
+.guide-page.active { display: block; }
+
+.page-header {
+  margin-bottom: 30px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.page-header h2 {
+  font-size: 3.4rem;
+  overflow-wrap: anywhere;
+}
+
+.excerpt {
+  max-width: 760px;
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+
+.markdown-body {
+  max-width: 820px;
+}
+
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 2.1em;
+  margin-bottom: 0.55em;
+}
+
+.markdown-body h2 { font-size: 1.65rem; }
+.markdown-body h3 { font-size: 1.22rem; }
+
+.markdown-body p,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body blockquote,
+.markdown-body pre {
+  margin: 0 0 1.05rem;
+}
+
+.markdown-body a { color: var(--accent-strong); }
+
+.markdown-body code {
+  padding: 0.16em 0.34em;
+  border-radius: 6px;
+  background: var(--code);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.92em;
+}
+
+.markdown-body pre {
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--code);
+  box-shadow: var(--shadow);
+}
+
+.markdown-body pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.markdown-body blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 16px;
+  color: var(--muted);
+}
+
+.empty-state {
+  padding: 48px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+}
+
+@media (max-width: 820px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .content { padding: 32px 22px; }
+  h1 { font-size: 1.8rem; }
+  .page-header h2 { font-size: 2.35rem; }
+}
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div>
+          <p class="eyebrow">repoguide wiki</p>
+          <h1>Project Wiki</h1>
+        </div>
+        <button id="theme-toggle" class="icon-button" type="button" title="Toggle color theme" aria-label="Toggle color theme">Theme</button>
+      </div>
+      <label class="search-label" for="search">Search guides</label>
+      <input id="search" class="search" type="search" placeholder="Search paths, notes, workflows..." autocomplete="off">
+      <div class="meta-row">
+        <span>8 guides</span>
+        <span>Press / to search</span>
+      </div>
+      <nav class="guide-nav" aria-label="Guide pages">
+        <a class="nav-link" href="#page-root" data-page="page-root">
+          <span class="nav-title">Repository Root</span>
+          <span class="nav-path">guide.md</span>
+        </a>
+        <a class="nav-link" href="#page-src" data-page="page-src">
+          <span class="nav-title">src</span>
+          <span class="nav-path">src/guide.md</span>
+        </a>
+        <a class="nav-link" href="#page-src-commands" data-page="page-src-commands">
+          <span class="nav-title">src/commands</span>
+          <span class="nav-path">src/commands/guide.md</span>
+        </a>
+        <a class="nav-link" href="#page-src-config" data-page="page-src-config">
+          <span class="nav-title">src/config</span>
+          <span class="nav-path">src/config/guide.md</span>
+        </a>
+        <a class="nav-link" href="#page-src-core" data-page="page-src-core">
+          <span class="nav-title">src/core</span>
+          <span class="nav-path">src/core/guide.md</span>
+        </a>
+        <a class="nav-link" href="#page-src-guides" data-page="page-src-guides">
+          <span class="nav-title">src/guides</span>
+          <span class="nav-path">src/guides/guide.md</span>
+        </a>
+        <a class="nav-link" href="#page-src-llm" data-page="page-src-llm">
+          <span class="nav-title">src/llm</span>
+          <span class="nav-path">src/llm/guide.md</span>
+        </a>
+        <a class="nav-link" href="#page-src-test-utils" data-page="page-src-test-utils">
+          <span class="nav-title">src/test-utils</span>
+          <span class="nav-path">src/test-utils/guide.md</span>
+        </a>
+      </nav>
+    </aside>
+    <main class="content" id="content">
+      <div id="empty-state" class="empty-state" hidden>No guides match your search.</div>
+      <article class="guide-page" id="page-root" data-page="page-root" tabindex="-1">
+        <header class="page-header">
+          <p class="eyebrow">guide.md</p>
+          <h2>Repository Root</h2>
+          <p class="excerpt">How This Repository Fits Together repoguide is a TypeScript CLI package that generates committed guide.md wiki pages for Git repositories.</p>
+        </header>
+        <div class="markdown-body">
+<h3 id="h-how-this-repository-fits-together">How This Repository Fits Together</h3>
+<p><code>repoguide</code> is a TypeScript CLI package that generates committed <code>guide.md</code> wiki pages for Git repositories. The root folder is the product/package boundary: it defines the npm package, public command surface, build/test configuration, implementation brief, and maintainer handoff notes.</p>
+<p>The actual runtime implementation lives under <code>src</code>. Use <code>src/guide.md</code> as the starting point for code-level navigation; the root is mainly for package-wide contracts and project workflow.</p>
+<p>The public CLI surface is intentionally small:</p>
+<ul>
+<li><code>repoguide init</code></li>
+<li><code>repoguide init --force</code></li>
+<li><code>repoguide check</code></li>
+<li><code>repoguide update</code></li>
+<li><code>repoguide estimate init</code></li>
+<li><code>repoguide estimate update</code></li>
+</ul>
+<p>Changes that alter this command surface should be reflected together in <code>README.md</code>, CLI tests under <code>src</code>, and any workflow documentation.</p>
+<h3 id="h-maintainer-workflow">Maintainer Workflow</h3>
+<p>Before implementation work, read <code>tasks.md</code>. It is the authoritative product and architecture brief, including edge cases and test expectations. <code>progress.md</code> is the living handoff log: update it when changing task status, adding notable behavior, or leaving follow-up work.</p>
+<p>For agent-driven work, <code>AGENTS.md</code> contains the repo-specific operating note and examples for launching other coding agents headlessly. In particular, it documents that <code>tasks.md</code> should be read before implementation and <code>progress.md</code> should be updated when task status changes.</p>
+<p>Typical validation commands are:</p>
+<ul>
+<li><code>npm run build</code></li>
+<li><code>npm test</code></li>
+<li><code>npm run coverage</code></li>
+<li><code>npm run pack:smoke</code></li>
+</ul>
+<p>Use <code>npm run pack:smoke</code> before packaging-sensitive changes because the package publishes only <code>dist</code> and <code>README.md</code>.</p>
+<h3 id="h-package-and-runtime-contracts">Package and Runtime Contracts</h3>
+<p>This package is ESM-only and targets Node.js <code>26.x</code>. The TypeScript configuration uses <code>module</code>/<code>moduleResolution</code> set to <code>NodeNext</code>, emits declarations and source maps into <code>dist</code>, and treats <code>src</code> as the only runtime source root.</p>
+<p>Important package-level contracts:</p>
+<ul>
+<li>The npm binary is <code>repoguide</code>, pointing at <code>./dist/cli.js</code>.</li>
+<li>Build output is not source-of-truth; edit <code>src</code>, then run <code>npm run build</code>.</li>
+<li><code>package-lock.json</code> is committed and should be kept in sync with dependency changes.</li>
+<li>Runtime dependencies are deliberately narrow: CLI parsing, Gitignore-style matching, OpenAI provider support, and schema validation.</li>
+<li>Tests use Vitest and live next to source files as <code>src/*<em>/</em>.test.ts</code>; they are excluded from the build.</li>
+</ul>
+<p>Do not add a second configuration system casually. The product spec in <code>tasks.md</code> requires environment variables plus a repo-root <code>.env</code> loaded through Node’s built-in support, not <code>dotenv</code>.</p>
+<h3 id="h-documentation-and-spec-boundaries">Documentation and Spec Boundaries</h3>
+<p><code>README.md</code> is the user-facing quickstart and command reference. Keep it concise and aligned with actual CLI behavior. There is a dedicated README test in <code>src/readme.test.ts</code> that pins command examples, so command or option changes need matching documentation and tests.</p>
+<p><code>tasks.md</code> is more detailed than normal project documentation because it doubles as an implementation brief for agents. It captures product behavior that may not be obvious from the code, including:</p>
+<ul>
+<li>Git-tracked files are the only source inputs.</li>
+<li><code>.guideignore</code> affects guide prompts but is not itself guide content.</li>
+<li><code>guide.md</code> files are excluded as source files, while child guide contents may inform parent guides.</li>
+<li>The no-guide sentinel is exactly <code>__REPOGUIDE_NO_GUIDE__</code>.</li>
+<li>Freshness is based on Git history and diffs, not timestamps.</li>
+<li><code>init</code> and <code>update</code> intentionally have different scopes.</li>
+</ul>
+<p>When behavior changes, update <code>tasks.md</code> if the product contract changes, and update <code>progress.md</code> with what was actually implemented or deferred.</p>
+<h3 id="h-root-configuration-notes">Root Configuration Notes</h3>
+<p>The root TypeScript and Vitest configs are intentionally simple. <code>tsconfig.json</code> excludes tests and <code>src/test-utils</code> from emitted package output. <code>vitest.config.ts</code> includes all <code>src/*<em>/</em>.ts</code> files for coverage except tests, test utilities, and declaration files.</p>
+<p>Coverage is currently reported but not enforced at 100%, despite the original task brief asking for a full coverage gate. This is an intentional project-status decision recorded in <code>progress.md</code>; do not reintroduce strict thresholds without confirming that direction.</p>
+<p>The <code>.gitignore</code> is broad enough for common Node and frontend tooling artifacts. RepoGuide-specific source filtering is not handled there; generated-guide input filtering belongs to <code>.guideignore</code> in repositories where <code>repoguide</code> is run.</p>
+<h3 id="h-child-module-map">Child Module Map</h3>
+<p>Go to <code>src</code> for implementation work. Its child guide explains the code boundaries in detail:</p>
+<ul>
+<li><code>src/commands</code> owns command workflows, progress output, dry-run behavior, counters, provider injection, and exit codes.</li>
+<li><code>src/core</code> owns Git interaction, path normalization, <code>.guideignore</code>, tree construction, planning, and freshness semantics.</li>
+<li><code>src/guides</code> owns prompt construction, guide validation, no-guide handling, and safe writes.</li>
+<li><code>src/config</code> owns environment loading and validation.</li>
+<li><code>src/llm</code> owns provider abstractions and OpenAI integration.</li>
+<li><code>src/test-utils</code> owns shared fixture repository helpers for tests.</li>
+</ul>
+<p>As a rule, root-level changes should be about package shape, documentation, task tracking, or build/test configuration. Runtime behavior usually belongs under <code>src</code>.</p>
+<h3 id="h-gotchas">Gotchas</h3>
+<ul>
+<li>This repository is itself the tool that generates <code>guide.md</code> files. Avoid treating guides as generated throwaways; they are committed internal wiki pages and should be useful to future maintainers.</li>
+<li><code>tasks.md</code> may describe desired or historical behavior in more detail than <code>README.md</code>; prefer it when implementing internals.</li>
+<li><code>progress.md</code> is append-style handoff context, not a replacement for tests. Keep entries concise but specific about files changed, tests run, outcomes, and follow-ups.</li>
+<li>Node 26 is part of the product contract. Dependency or API choices should not silently broaden or lower the runtime target.</li>
+<li>If command examples change, update <code>README.md</code> and the README/CLI tests together.</li>
+</ul>
+        </div>
+      </article>
+      <article class="guide-page" id="page-src" data-page="page-src" tabindex="-1">
+        <header class="page-header">
+          <p class="eyebrow">src/guide.md</p>
+          <h2>src</h2>
+          <p class="excerpt">How This Fits src is the top-level implementation boundary for RepoGuide.</p>
+        </header>
+        <div class="markdown-body">
+<h3 id="h-how-this-fits">How This Fits</h3>
+<p><code>src</code> is the top-level implementation boundary for RepoGuide. It contains the CLI entrypoint, process-level constants, and the major feature areas that do the real work:</p>
+<ul>
+<li><code>src/commands</code> orchestrates user workflows (<code>init</code>, <code>update</code>, <code>check</code>, <code>estimate</code>).</li>
+<li><code>src/core</code> models the Git repository, guide paths, planning, and freshness rules.</li>
+<li><code>src/guides</code> builds prompts, validates model output, and writes <code>guide.md</code>.</li>
+<li><code>src/config</code> loads and validates environment/configuration.</li>
+<li><code>src/llm</code> is the provider abstraction and OpenAI integration.</li>
+<li><code>src/test-utils</code> provides fixture Git repositories for tests.</li>
+</ul>
+<p>The top-level <code>src/cli.ts</code> should stay thin. It owns command registration, process exit-code mapping, and expected CLI error handling. It should not learn repository scanning rules, prompt structure, provider behavior, or freshness semantics; those belong in the child modules above.</p>
+<h3 id="h-cli-entry-point-and-exit-semantics">CLI Entry Point and Exit Semantics</h3>
+<p><code>src/cli.ts</code> exports two entry points:</p>
+<ul>
+<li><code>buildProgram()</code> constructs the Commander program and is used by tests to inspect help output and command registration.</li>
+<li><code>main(argv = process.argv)</code> is the executable wrapper used when the package is run as a CLI.</li>
+</ul>
+<p>The registered command surface is:</p>
+<ul>
+<li><code>repoguide init</code></li>
+<li><code>--dry-run</code></li>
+<li><code>--force</code></li>
+<li><code>repoguide update</code></li>
+<li><code>--dry-run</code></li>
+<li><code>repoguide check</code></li>
+<li><code>repoguide estimate init</code></li>
+<li><code>repoguide estimate update</code></li>
+</ul>
+<p>Each CLI action delegates immediately to the matching <code>run*</code> function in <code>src/commands</code> and then sets <code>process.exitCode</code> from the returned <code>{ exitCode }</code>.</p>
+<p>Important exit-code behavior:</p>
+<ul>
+<li>Command workflow results decide normal command exit codes.</li>
+<li><code>RepoGuideError</code> is considered an expected user-facing failure: print only <code>error.message</code> to stderr and use <code>error.exitCode</code>.</li>
+<li>Commander help exits as <code>0</code>.</li>
+<li>Commander usage errors, such as unknown commands, map to <code>2</code>.</li>
+<li>Other unexpected errors are printed and also map to <code>2</code>.</li>
+</ul>
+<p>Do not replace <code>process.exitCode</code> handling with direct <code>process.exit()</code> in normal workflow code. Tests rely on being able to call <code>main()</code> and inspect <code>process.exitCode</code> without terminating the process.</p>
+<h3 id="h-constants-and-shared-policy">Constants and Shared Policy</h3>
+<p><code>src/constants.ts</code> is the central place for cross-module policy constants:</p>
+<ul>
+<li><code>GUIDE_FILENAME</code> is the canonical guide filename.</li>
+<li><code>NO_GUIDE_SENTINEL</code> is the exact model response that means “do not create a guide”.</li>
+<li><code>PROMPT_BUDGET_CHARS</code> bounds prompt construction.</li>
+<li><code>RESERVED_OUTPUT_TOKENS</code> is the output token reservation used by the LLM layer.</li>
+<li><code>DEFAULT_MAX_FILE_BYTES</code> is the default direct-file inclusion limit for prompts.</li>
+</ul>
+<p>If changing one of these values, check all consumers rather than treating the change as local. In particular:</p>
+<ul>
+<li>The no-guide sentinel is part of the prompt/provider/validation contract.</li>
+<li>Prompt budget and max-file limits affect generated guide quality and token estimation.</li>
+<li>Reserved output tokens affect OpenAI request sizing and tests in <code>src/llm</code>.</li>
+</ul>
+<h3 id="h-main-control-flow">Main Control Flow</h3>
+<p>A typical generation command flows through the codebase like this:</p>
+<ol>
+<li><code>src/cli.ts</code> parses arguments and calls a <code>run*</code> command.</li>
+<li><code>src/commands</code> loads configuration, builds repository context, chooses a plan, reports progress, and returns an exit code.</li>
+<li><code>src/core</code> provides Git state, repo-relative path semantics, tree construction, guide planning, and stale/fresh decisions.</li>
+<li><code>src/guides</code> builds the folder prompt, calls a <code>GuideProvider</code>, validates markdown, and writes <code>guide.md</code> if appropriate.</li>
+<li><code>src/llm</code> sends the already-built prompt to the configured provider and normalizes the response.</li>
+</ol>
+<p>Keep these layers clean. If a change needs to know “which folders should be processed,” it usually belongs in <code>src/core</code> or <code>src/commands</code>. If it needs to know “what prompt should be sent” or “is this guide markdown valid,” it belongs in <code>src/guides</code>. If it needs to know OpenAI request/retry behavior, it belongs in <code>src/llm</code>.</p>
+<h3 id="h-child-modules">Child Modules</h3>
+<h4 id="h-src-commands"><code>src/commands</code></h4>
+<p>Go here when changing what a CLI command does after it has been parsed. This layer owns workflow orchestration, progress output, counters, dry-run behavior, provider injection, and command exit codes.</p>
+<p>Notable contracts:</p>
+<ul>
+<li><code>runCheck</code> is read-only and exits <code>1</code> when guides need attention.</li>
+<li><code>runInit</code> creates missing guides bottom-up and skips existing guides unless <code>--force</code>.</li>
+<li><code>runUpdate</code> updates stale existing guides, protects guides with uncommitted edits, and does not create missing guides.</li>
+<li><code>runEstimate</code> mirrors real planning logic without requiring LLM credentials or calling a provider.</li>
+</ul>
+<h4 id="h-src-core"><code>src/core</code></h4>
+<p>Go here for repository modeling and freshness rules. It centralizes Git calls, <code>.guideignore</code>, repo-relative paths, folder tree construction, and command planning.</p>
+<p>Important invariants:</p>
+<ul>
+<li>Repo-relative root is <code>.</code>.</li>
+<li>Repo paths are POSIX-style.</li>
+<li><code>guidePathForFolder</code> should be used instead of hand-built guide paths.</li>
+<li>Submodules are opaque gitlinks.</li>
+<li>Mode-only changes do not make guides stale.</li>
+<li>Direct source changes affect that folder; descendant changes propagate upward through descendant guide freshness.</li>
+</ul>
+<h4 id="h-src-guides"><code>src/guides</code></h4>
+<p>Go here for prompt content, output validation, and safe guide writes. This layer turns a planned <code>FolderNode</code> into <code>created</code>, <code>updated</code>, <code>dry-run</code>, <code>no-guide</code>, or <code>failed</code>.</p>
+<p>Important invariants:</p>
+<ul>
+<li>Provider output is validated before write or dry-run success.</li>
+<li>The first heading must match the target folder.</li>
+<li>At least one <code>##</code> section is required.</li>
+<li>The exact no-guide sentinel is recognized only after trimming surrounding whitespace.</li>
+<li>Existing symlink or non-regular <code>guide.md</code> targets are refused.</li>
+</ul>
+<h4 id="h-src-config"><code>src/config</code></h4>
+<p>Go here for environment and <code>.env</code> behavior. <code>loadConfig(cwd)</code> resolves the repo root, loads repo-local <code>.env</code>, preserves shell precedence, validates config, and returns <code>{ config, repoRoot }</code>.</p>
+<p>Generation commands should call <code>assertLlmConfig(config)</code> only when they actually need provider credentials/model settings. Inspection and estimate workflows should remain usable without secrets.</p>
+<h4 id="h-src-llm"><code>src/llm</code></h4>
+<p>Go here for provider integrations. Code outside this folder should use <code>GuideProvider</code>, not an SDK directly.</p>
+<p>The OpenAI implementation sends a fully composed prompt through the Responses API, reserves output tokens via <code>RESERVED_OUTPUT_TOKENS</code>, recognizes the no-guide sentinel through guide validation helpers, retries transient failures once, and returns normalized provider results rather than throwing for ordinary API failures.</p>
+<h4 id="h-src-test-utils"><code>src/test-utils</code></h4>
+<p>Go here only for shared test infrastructure. The current helper creates real temporary Git repositories and is used by integration-style tests that need actual Git behavior.</p>
+<h3 id="h-testing-notes">Testing Notes</h3>
+<p>The top-level tests focus on the CLI contract rather than command internals:</p>
+<ul>
+<li><code>src/cli.test.ts</code> verifies registered commands/help and Commander unknown-command behavior.</li>
+<li><code>src/cli-main.test.ts</code> verifies <code>main()</code> exit-code mapping and <code>RepoGuideError</code> handling.</li>
+<li><code>src/readme.test.ts</code> keeps README command examples aligned with the registered CLI surface.</li>
+</ul>
+<p>When changing command names, options, or help-visible structure, update tests and README together. <code>src/readme.test.ts</code> intentionally asserts the README command examples exactly:</p>
+<ul>
+<li><code>repoguide init</code></li>
+<li><code>repoguide init --force</code></li>
+<li><code>repoguide check</code></li>
+<li><code>repoguide update</code></li>
+<li><code>repoguide estimate init</code></li>
+<li><code>repoguide estimate update</code></li>
+</ul>
+<p>For workflow behavior, prefer tests in the relevant child module:</p>
+<ul>
+<li>Command orchestration and output: <code>src/commands</code></li>
+<li>Git/path/freshness behavior: <code>src/core</code></li>
+<li>Prompt/write/validation behavior: <code>src/guides</code></li>
+<li>Provider behavior: <code>src/llm</code></li>
+<li>Config and environment behavior: <code>src/config</code></li>
+</ul>
+<h3 id="h-gotchas">Gotchas</h3>
+<ul>
+<li><code>buildProgram()</code> calls <code>.exitOverride()</code>. This is intentional so <code>main()</code> and tests can convert Commander exits into RepoGuide’s exit-code behavior.</li>
+<li>Unknown Commander errors should not print an extra raw error from <code>main()</code>; Commander already writes usage errors through its configured output path.</li>
+<li><code>main()</code> detects direct execution by comparing <code>import.meta.url</code> with <code>pathToFileURL(process.argv[1]).href</code>. Keep this check if refactoring the CLI entrypoint for ESM.</li>
+<li>Top-level CLI tests mock <code>process.exit</code>, <code>process.cwd</code>, and console/stdout/stderr. Always restore global process state in tests that add similar mocks.</li>
+<li>The constants in <code>src/constants.ts</code> encode cross-layer contracts. Changing them can alter prompt generation, model calls, validation, and estimate output all at once.</li>
+</ul>
+        </div>
+      </article>
+      <article class="guide-page" id="page-src-commands" data-page="page-src-commands" tabindex="-1">
+        <header class="page-header">
+          <p class="eyebrow">src/commands/guide.md</p>
+          <h2>src/commands</h2>
+          <p class="excerpt">How This Fits src/commands contains the programmatic implementations of the CLI workflows: checking guide freshness, creating missing guides, refreshing stale guides, and estima...</p>
+        </header>
+        <div class="markdown-body">
+<h3 id="h-how-this-fits">How This Fits</h3>
+<p><code>src/commands</code> contains the programmatic implementations of the CLI workflows: checking guide freshness, creating missing guides, refreshing stale guides, and estimating LLM token usage. These functions are thin orchestration layers. They should decide <em>what workflow to run and how to report it</em>, while delegating repository modeling, freshness rules, prompt construction, file writes, and provider calls to nearby modules.</p>
+<p>The main entry points are:</p>
+<ul>
+<li><code>runCheck</code></li>
+<li><code>runInit</code></li>
+<li><code>runUpdate</code></li>
+<li><code>runEstimate</code></li>
+</ul>
+<p>Each command returns a shared <code>CommandResult</code> shape with an <code>exitCode</code>, and writes human-facing progress/status output directly to <code>console.log</code> / <code>console.error</code>.</p>
+<h3 id="h-command-responsibilities">Command Responsibilities</h3>
+<h4 id="h-runcheck"><code>runCheck</code></h4>
+<p><code>runCheck</code> is read-only. It loads config, builds repository context, determines the current repo-relative folder, then asks <code>checkPlan</code> which folders are relevant. For each planned folder it calls <code>freshnessForFolder</code>.</p>
+<p>Important behavior:</p>
+<ul>
+<li>Exits <code>0</code> only when no planned guide needs attention.</li>
+<li>Exits <code>1</code> when one or more guides are stale, missing, or otherwise need attention.</li>
+<li>Prints <code>All guides are fresh.</code> on success.</li>
+<li>Prints one line per attention item as:</li>
+<li><code>&lt;folder.path&gt;: &lt;reason&gt;, &lt;reason&gt;</code></li>
+</ul>
+<p>Do not add generation or mutation behavior here. <code>check</code> is intentionally a pure reporting command apart from stdout.</p>
+<h4 id="h-runinit"><code>runInit</code></h4>
+<p><code>runInit</code> creates guides for folders in the repository, using <code>initPlan</code>.</p>
+<p>Important behavior:</p>
+<ul>
+<li>Requires LLM config via <code>assertLlmConfig</code>, even when a provider is not explicitly supplied.</li>
+<li>Uses <code>OpenAIGuideProvider</code> by default, but tests and callers can inject a <code>GuideProvider</code>.</li>
+<li>Walks the init plan in the order returned by <code>initPlan</code>; current behavior relies on deepest folders being generated before parents.</li>
+<li>Skips existing guides unless <code>force</code> is set.</li>
+<li>If an existing skipped guide appears stale, it reports that fact but does not update it.</li>
+<li>With <code>force</code>, existing guides are regenerated using <code>updateExisting: true</code>.</li>
+<li>With <code>dryRun</code>, generation is planned and provider interaction still happens through <code>generateForFolder</code>, but guides are not written.</li>
+</ul>
+<p>Counters are part of the user contract. Preserve their meanings:</p>
+<ul>
+<li><code>created</code>: incremented for both newly created and force-updated guides.</li>
+<li><code>skipped</code>: existing guides skipped because <code>force</code> was not set.</li>
+<li><code>stale</code>: skipped existing guides that freshness logic considers stale.</li>
+<li><code>no-guide</code>: provider said the folder does not deserve a guide.</li>
+<li><code>dry-run</code>: generation would have happened but no file was written.</li>
+<li><code>failed</code>: provider/generation failure.</li>
+</ul>
+<p>A nonzero exit code is used only for failed generations, not for stale skipped guides or <code>no-guide</code> responses.</p>
+<h4 id="h-runupdate"><code>runUpdate</code></h4>
+<p><code>runUpdate</code> refreshes existing guides that need attention. It does not create missing guides.</p>
+<p>Important behavior:</p>
+<ul>
+<li>Requires LLM config via <code>assertLlmConfig</code>.</li>
+<li>Builds an <code>updatePlan</code> from the current repo-relative folder.</li>
+<li>Processes child folders before parent folders.</li>
+<li>Recomputes freshness for each folder immediately before updating it.</li>
+<li>Skips folders whose guide is missing.</li>
+<li>Skips guides with uncommitted changes, protecting local edits.</li>
+<li>Tracks guides updated during this run with <code>changedGuides</code>, so parent freshness can account for child guides already regenerated in the same command.</li>
+</ul>
+<p>This <code>changedGuides</code> set is important: without it, parent guides may still look stale because their child guide inputs changed during the current update run.</p>
+<p>Provider <code>no-guide</code> results leave the existing guide unchanged and are not failures. Actual failed generations produce stderr output and make the command exit <code>1</code>.</p>
+<h4 id="h-runestimate"><code>runEstimate</code></h4>
+<p><code>runEstimate</code> is a dry accounting workflow, not a generation workflow.</p>
+<p>It intentionally mirrors real command selection logic:</p>
+<ul>
+<li><code>estimate init</code> uses <code>initPlan</code>, then excludes folders that already have guides.</li>
+<li><code>estimate update</code> uses <code>updatePlan</code>, then includes only existing guides that need attention.</li>
+<li>It builds real guide prompts with <code>buildGuidePrompt</code> and estimates input tokens from prompt character counts.</li>
+<li>It does not require API credentials, because it does not call an LLM provider.</li>
+</ul>
+<p>Keep this command aligned with <code>runInit</code> and <code>runUpdate</code> planning rules. If prompt selection, folder ordering, or freshness eligibility changes in the real commands, update estimate behavior too.</p>
+<h3 id="h-control-flow-and-boundaries">Control Flow and Boundaries</h3>
+<p>A typical command follows this pipeline:</p>
+<ol>
+<li><code>loadConfig(cwd)</code> resolves repo root and environment-derived settings.</li>
+<li><code>buildRepoContext(repoRoot, cwd)</code> scans the repository and prepares tree/source/git context.</li>
+<li>A plan function from <code>src/core/plans.ts</code> chooses target folders.</li>
+<li><code>freshnessForFolder</code> from <code>src/core/stale.ts</code> decides whether existing guides need attention.</li>
+<li>Generation commands call <code>generateForFolder</code> from <code>src/guides/generate.ts</code>.</li>
+<li>Provider calls go through <code>GuideProvider</code>, with <code>OpenAIGuideProvider</code> as the default production provider.</li>
+<li>Commands print progress and return <code>{ exitCode }</code>.</li>
+</ol>
+<p>Keep command modules free of low-level repository logic. If behavior depends on tree construction, git entries, guide paths, or staleness rules, it usually belongs in <code>src/core</code>. If behavior depends on prompt content or guide file writing, it usually belongs in <code>src/guides</code>.</p>
+<h3 id="h-contracts-and-invariants">Contracts and Invariants</h3>
+<ul>
+<li>Commands accept an optional <code>cwd</code>; tests rely on this to run inside fixture repositories.</li>
+<li><code>runInit</code> and <code>runUpdate</code> accept injected providers. Preserve this seam for tests and non-OpenAI integrations.</li>
+<li><code>runCheck</code> and <code>runEstimate</code> should not call providers.</li>
+<li><code>runUpdate</code> must not overwrite guides with uncommitted changes.</li>
+<li><code>runUpdate</code> must not create missing guides; missing guide creation belongs to <code>runInit</code>.</li>
+<li><code>runInit</code> without <code>force</code> must not overwrite existing guides.</li>
+<li><code>runEstimate</code> should not require <code>OPENAI_API_KEY</code> or model configuration.</li>
+<li>Progress output is tested and effectively part of the CLI contract. Be cautious when changing message text, counter names, or ordering.</li>
+</ul>
+<h3 id="h-gotchas">Gotchas</h3>
+<ul>
+<li><code>runInit</code> calls <code>assertLlmConfig</code> before deciding whether every guide will be skipped. This means even a no-op init currently requires LLM configuration.</li>
+<li><code>runEstimate</code> avoids this by only using config values needed for prompt sizing, especially <code>REPOGUIDE_MAX_FILE_BYTES</code>.</li>
+<li><code>folder.path</code> may be <code>.</code> for the repo root. Output and provider calls should preserve that convention.</li>
+<li><code>guidePathForFolder(&#39;.&#39;)</code> is used to map the root folder to the root <code>guide.md</code>; do not hand-roll guide paths in commands.</li>
+<li><code>runInit</code> uses <code>created</code> for both create and force-regenerate results. This is existing behavior and is asserted by tests.</li>
+<li><code>runUpdate</code>’s progress index has no <code>/total</code> because eligibility can change as earlier folders are updated.</li>
+</ul>
+<h3 id="h-testing-notes">Testing Notes</h3>
+<p><code>src/commands/commands.test.ts</code> is an integration-style test suite for command workflows using fixture repositories. It verifies planning order, stdout/stderr messages, exit codes, provider injection, dry-run behavior, stale detection, and protection of uncommitted guide edits.</p>
+<p>When changing command behavior, add or update tests here if the change affects:</p>
+<ul>
+<li>folder selection or ordering;</li>
+<li>counter summaries;</li>
+<li>progress output;</li>
+<li>exit-code semantics;</li>
+<li>provider result handling;</li>
+<li>dry-run behavior;</li>
+<li>stale/missing guide handling;</li>
+<li>environment variable requirements.</li>
+</ul>
+<p>The fake provider in these tests records requested folder paths, which is often the clearest way to assert command planning without depending on generated markdown content.</p>
+        </div>
+      </article>
+      <article class="guide-page" id="page-src-config" data-page="page-src-config" tabindex="-1">
+        <header class="page-header">
+          <p class="eyebrow">src/config/guide.md</p>
+          <h2>src/config</h2>
+          <p class="excerpt">How This Fits src/config is the runtime configuration boundary for RepoGuide.</p>
+        </header>
+        <div class="markdown-body">
+<h3 id="h-how-this-fits">How This Fits</h3>
+<p><code>src/config</code> is the runtime configuration boundary for RepoGuide. Code outside this folder should treat configuration as a parsed, typed <code>RepoGuideConfig</code> rather than reading raw environment variables directly.</p>
+<p>The main entry point is <code>loadConfig(cwd)</code>, which:</p>
+<ol>
+<li>Resolves the Git repository root using <code>findRepoRoot</code> from <code>src/core/git.js</code>.</li>
+<li>Looks for a repo-local <code>.env</code> file at that root.</li>
+<li>Loads <code>.env</code> values into <code>process.env</code>.</li>
+<li>Restores shell-provided values so the caller’s environment takes precedence over <code>.env</code>.</li>
+<li>Validates and normalizes the resulting environment through the Zod schema in <code>src/config/schema.ts</code>.</li>
+<li>Returns both the parsed config and resolved <code>repoRoot</code>.</li>
+</ol>
+<p>This means callers get two pieces of state that are intentionally coupled: the configuration and the repository root used to locate <code>.env</code>.</p>
+<h3 id="h-configuration-contracts">Configuration Contracts</h3>
+<p>The schema in <code>src/config/schema.ts</code> defines the supported environment surface:</p>
+<ul>
+<li><code>OPENAI_API_KEY</code></li>
+<li><code>REPOGUIDE_PROVIDER</code></li>
+<li><code>REPOGUIDE_MODEL</code></li>
+<li><code>REPOGUIDE_MAX_FILE_BYTES</code></li>
+</ul>
+<p>Important invariants:</p>
+<ul>
+<li><code>REPOGUIDE_PROVIDER</code> defaults to <code>openai</code>.</li>
+<li><code>REPOGUIDE_MAX_FILE_BYTES</code> is coerced to a positive integer and defaults to <code>DEFAULT_MAX_FILE_BYTES</code> from <code>src/constants.js</code>.</li>
+<li>LLM credentials and model are optional at load time.</li>
+<li>LLM credentials and model become required only when <code>assertLlmConfig(config)</code> is called.</li>
+</ul>
+<p>That split is deliberate. Non-generation workflows should be able to load config without requiring secrets.</p>
+<h3 id="h-shell-vs-env-precedence">Shell vs <code>.env</code> Precedence</h3>
+<p><code>loadConfig</code> uses Node’s <code>loadEnvFile</code>, which mutates <code>process.env</code>. To keep expected CLI behavior, this folder preserves shell precedence manually:</p>
+<ul>
+<li>Existing shell values for relevant keys are snapshotted before loading <code>.env</code>.</li>
+<li>After <code>.env</code> loading, shell values are restored.</li>
+<li>Values missing from the shell may still be supplied by <code>.env</code>.</li>
+</ul>
+<p>When changing config keys, update the relevant-key handling in <code>src/config/env.ts</code>; otherwise shell precedence and cleanup behavior may silently diverge from schema behavior.</p>
+<h3 id="h-error-handling-and-secret-redaction">Error Handling and Secret Redaction</h3>
+<p>Configuration failures are wrapped in <code>RepoGuideError</code> from <code>src/core/errors.js</code>.</p>
+<p><code>src/config/env.ts</code> redacts <code>OPENAI_API_KEY</code> from error messages before throwing. Keep this property intact when modifying validation or <code>.env</code> loading paths. Tests assert that invalid environment errors do not leak secret values.</p>
+<p>The redaction currently only targets <code>OPENAI_API_KEY</code>, so adding new secret-bearing config keys should include corresponding redaction behavior.</p>
+<h3 id="h-when-to-use-assertllmconfig">When to Use <code>assertLlmConfig</code></h3>
+<p>Use <code>loadConfig</code> when a command needs general repository/config context.</p>
+<p>Use <code>assertLlmConfig(config)</code> only at the boundary where guide generation actually needs an LLM provider. This keeps validation user-friendly:</p>
+<ul>
+<li>Commands that inspect files or compute repo context can run without API keys.</li>
+<li>Generation fails early with clear errors if provider, key, or model settings are missing or unsupported.</li>
+</ul>
+<p><code>assertLlmConfig</code> currently enforces that only <code>openai</code> is supported. If adding providers, this function is the enforcement point that must change alongside schema and generation code.</p>
+<h3 id="h-testing-notes">Testing Notes</h3>
+<p><code>src/config/env.test.ts</code> is the regression suite for the main contracts:</p>
+<ul>
+<li>Defaults load without LLM secrets.</li>
+<li><code>.env</code> values are honored.</li>
+<li>Shell environment values override <code>.env</code>.</li>
+<li>Invalid values throw <code>RepoGuideError</code>-style messages without exposing secrets.</li>
+<li>LLM-specific fields are not required until <code>assertLlmConfig</code>.</li>
+</ul>
+<p>Tests mutate <code>process.env</code>, so they snapshot and restore known keys after each case. If new config keys are added, extend that test key list to avoid cross-test contamination.</p>
+        </div>
+      </article>
+      <article class="guide-page" id="page-src-core" data-page="page-src-core" tabindex="-1">
+        <header class="page-header">
+          <p class="eyebrow">src/core/guide.md</p>
+          <h2>src/core</h2>
+          <p class="excerpt">How This Fits src/core contains the repository-analysis primitives used by the CLI/workflow layers to decide which folders need guide.md files, which existing guides are stale,...</p>
+        </header>
+        <div class="markdown-body">
+<h3 id="h-how-this-fits">How This Fits</h3>
+<p><code>src/core</code> contains the repository-analysis primitives used by the CLI/workflow layers to decide which folders need <code>guide.md</code> files, which existing guides are stale, and in what order guide work should happen. It is intentionally mostly side-effect-light except for Git/filesystem boundaries:</p>
+<ul>
+<li>Git state is read through <code>src/core/git.ts</code>.</li>
+<li>Repo-relative path semantics are centralized in <code>src/core/paths.ts</code>.</li>
+<li><code>.guideignore</code> filtering is applied by <code>src/core/guideignore.ts</code>.</li>
+<li>Folder guide candidates are modeled by <code>src/core/tree.ts</code>.</li>
+<li>Command-level folder plans are assembled in <code>src/core/plans.ts</code>.</li>
+<li>Staleness/freshness decisions live in <code>src/core/stale.ts</code>.</li>
+</ul>
+<p>Code outside this folder should prefer these APIs over shelling out to Git or hand-normalizing paths, because the details here encode repo-specific behavior around <code>guide.md</code>, submodules, ignored files, and mode-only changes.</p>
+<h3 id="h-core-contracts-and-invariants">Core Contracts and Invariants</h3>
+<h4 id="h-repo-paths-are-posix-style-and-cannot-escape-the-repo">Repo paths are POSIX-style and cannot escape the repo</h4>
+<p>All repo-relative paths should flow through <code>normalizeRepoPath</code> from <code>src/core/paths.ts</code> before being stored or compared. Important conventions:</p>
+<ul>
+<li>Root is represented as <code>.</code>.</li>
+<li>Separators are <code>/</code>, even on Windows.</li>
+<li><code>..</code> escapes are rejected with <code>RepoGuideError</code>.</li>
+<li>Guide paths are derived with <code>guidePathForFolder</code>, not string concatenation, because the root guide is <code>guide.md</code> while nested guides are <code>&lt;folder&gt;/guide.md</code>.</li>
+</ul>
+<p>Use helpers such as <code>folderOf</code>, <code>joinRepoPath</code>, <code>isDescendantOrSelf</code>, and <code>absoluteFromRepo</code> rather than duplicating path logic. Many freshness and tree operations depend on exact string comparisons.</p>
+<h4 id="h-git-paths-with-newlines-are-unsupported">Git paths with newlines are unsupported</h4>
+<p><code>src/core/git.ts</code> uses NUL-delimited Git output where possible, but explicitly rejects paths containing <code>\n</code> or <code>\r</code>. This is intentional and tested. If adding new Git parsing code, keep the same behavior by validating paths before returning them.</p>
+<h4 id="h-submodules-are-opaque">Submodules are opaque</h4>
+<p><code>listTrackedEntries</code> reads <code>git ls-files --stage</code>, so submodules appear as gitlink entries with mode <code>160000</code>. They are treated as tracked entries but not recursed into as source files. Do not add filesystem recursion here unless it preserves that boundary.</p>
+<h4 id="h-mode-only-changes-do-not-make-guides-stale">Mode-only changes do not make guides stale</h4>
+<p>Git reports chmod-only changes as <code>M</code>. <code>src/core/git.ts</code> distinguishes content changes by comparing <code>--name-status</code> with <code>--numstat</code>; <code>M</code> entries with no numstat content change become status <code>mode-only</code>. <code>src/core/stale.ts</code> ignores those for freshness. Keep this behavior when changing diff parsing, or chmod/line-ending noise will cause unnecessary guide updates.</p>
+<h3 id="h-data-flow">Data Flow</h3>
+<p>The common analysis path is:</p>
+<ol>
+<li><code>buildRepoContext(repoRoot, cwd)</code> in <code>src/core/plans.ts</code></li>
+</ol>
+<ul>
+<li>calls <code>listTrackedEntries</code></li>
+<li>loads <code>.guideignore</code></li>
+<li>filters source files</li>
+<li>builds a <code>FolderTree</code></li>
+</ul>
+<ol>
+<li>A plan function chooses folders:</li>
+</ol>
+<ul>
+<li><code>initPlan</code> returns all folders deepest-first.</li>
+<li><code>checkPlan</code> returns the current folder’s descendants plus its ancestors.</li>
+<li><code>updatePlan</code> separates child folders from parent folders so children can be updated before parent summaries.</li>
+</ul>
+<ol>
+<li><code>staleFolders</code> calls <code>freshnessForFolder</code> for each planned folder.</li>
+</ol>
+<p>The tree is built from both eligible source files and existing guide files. This means folders with an existing <code>guide.md</code> stay visible even if they currently have no eligible source files; that lets the tool check or update documentation-only guide nodes instead of silently dropping them.</p>
+<h3 id="h-guideignore-semantics"><code>.guideignore</code> Semantics</h3>
+<p><code>loadGuideIgnore</code> in <code>src/core/guideignore.ts</code> wraps the <code>ignore</code> package and adds tool-specific defaults:</p>
+<ul>
+<li>Any <code>guide.md</code> is ignored as source input.</li>
+<li><code>.guideignore</code> itself is ignored as source input.</li>
+<li>Patterns in <code>.guideignore</code> use gitignore-style matching, including negation order.</li>
+</ul>
+<p>This filtering is used when building <code>RepoContext.sourceFiles</code>. Staleness checks also reload <code>.guideignore</code> to avoid marking ignored direct source changes as stale.</p>
+<p>When changing ignore behavior, update both guide candidate generation and freshness expectations; otherwise the tree and stale checks can disagree.</p>
+<h3 id="h-freshness-model">Freshness Model</h3>
+<p><code>src/core/stale.ts</code> answers whether a folder’s guide needs attention. A folder needs attention when:</p>
+<ul>
+<li>its guide file is missing;</li>
+<li>its guide exists but has no Git history;</li>
+<li>a direct source file in that folder changed after the guide’s last commit or in the working tree;</li>
+<li>a descendant guide changed after the guide’s last commit or in the working tree;</li>
+<li>a descendant guide was updated earlier in the same run via <code>extraChangedGuides</code>.</li>
+</ul>
+<p>Important boundaries:</p>
+<ul>
+<li>Only <strong>direct child files</strong> make a folder stale for source changes. Descendant source changes are expected to be summarized by descendant guides first, then propagated upward through “descendant guide changed”.</li>
+<li>Renames and deletes count by considering both <code>path</code> and <code>oldPath</code>.</li>
+<li>Guide changes propagate upward, but a guide does not mark itself stale because it changed.</li>
+<li>Mode-only changes are ignored.</li>
+<li>Ignored source files are ignored for staleness.</li>
+</ul>
+<p><code>freshnessForFolder</code> currently accepts <code>eligibleSourceFiles</code> but does not use it directly; it uses Git changes plus <code>.guideignore</code> checks. The argument is still part of the public core API and is passed from <code>staleFolders</code>.</p>
+<h3 id="h-planning-behavior">Planning Behavior</h3>
+<p><code>src/core/plans.ts</code> encodes command-oriented folder selection:</p>
+<ul>
+<li><code>repoRelativeFolder(repoRoot, cwd)</code> resolves real paths before calculating the current repo-relative folder. This helps with symlinks.</li>
+<li><code>initPlan</code> is deepest-first for the whole tree, so leaf guides can be created before parent summaries.</li>
+<li><code>checkPlan</code> includes both descendants of the current folder and ancestors up to root, then sorts by path.</li>
+<li><code>updatePlan</code> returns:</li>
+<li><code>child</code>: descendants of the current folder, deepest-first;</li>
+<li><code>parent</code>: ancestors of the current folder, bottom-up, excluding folders already in <code>child</code>.</li>
+</ul>
+<p>If you change ordering, check that parent guide generation still sees the child guide updates it is supposed to summarize.</p>
+<h3 id="h-error-handling">Error Handling</h3>
+<p>Use <code>RepoGuideError</code> from <code>src/core/errors.ts</code> for expected operational failures such as invalid repo paths, unsupported Git paths, or Git command failures. It carries an <code>exitCode</code> for the CLI layer. Avoid throwing raw <code>Error</code> for user-facing validation failures in this folder.</p>
+<h3 id="h-testing-notes">Testing Notes</h3>
+<p>The tests in this folder use fixture Git repositories and cover edge cases that are easy to regress:</p>
+<ul>
+<li>spaces in paths;</li>
+<li>empty repositories and detached HEAD;</li>
+<li>renames, deletes, staged and unstaged changes;</li>
+<li>chmod-only changes;</li>
+<li>CRLF rewrites that Git considers unchanged;</li>
+<li><code>.guideignore</code> negation;</li>
+<li>folders that only exist because they contain guides;</li>
+<li>submodules as opaque gitlinks;</li>
+<li>rejection of newline-containing Git paths.</li>
+</ul>
+<p>When changing Git parsing or freshness logic, run the corresponding <code>src/core/*.test.ts</code> tests rather than relying only on high-level CLI tests.</p>
+        </div>
+      </article>
+      <article class="guide-page" id="page-src-guides" data-page="page-src-guides" tabindex="-1">
+        <header class="page-header">
+          <p class="eyebrow">src/guides/guide.md</p>
+          <h2>src/guides</h2>
+          <p class="excerpt">How This Fits src/guides is the guide-production layer: it turns a planned folder from src/core/plans.ts / src/core/tree.ts into either a committed guide.md , a dry-run result,...</p>
+        </header>
+        <div class="markdown-body">
+<h3 id="h-how-this-fits">How This Fits</h3>
+<p><code>src/guides</code> is the guide-production layer: it turns a planned folder from <code>src/core/plans.ts</code> / <code>src/core/tree.ts</code> into either a committed <code>guide.md</code>, a dry-run result, a no-guide decision, or a failure. It sits between repository discovery and the LLM provider:</p>
+<ol>
+<li>Core code builds a <code>RepoContext</code> with a folder tree and Git metadata.</li>
+<li><code>generateForFolder</code> in <code>src/guides/generate.ts</code> builds a prompt for one <code>FolderNode</code>.</li>
+<li>A <code>GuideProvider</code> from <code>src/llm/provider.ts</code> returns guide markdown, a no-guide result, or an error.</li>
+<li>The markdown is validated locally before any filesystem write.</li>
+<li>If valid and not a dry run, the guide is written to the path resolved by <code>src/core/paths.ts</code>.</li>
+</ol>
+<p>This folder is intentionally not responsible for selecting which folders should be processed, discovering Git state, or talking to a specific LLM API. It owns prompt shape, guide-output validation, and safe writing behavior.</p>
+<h3 id="h-main-workflow">Main Workflow</h3>
+<p>The central entry point is <code>generateForFolder</code> in <code>src/guides/generate.ts</code>.</p>
+<p>Important contracts in that workflow:</p>
+<ul>
+<li>The provider receives the repo-relative folder path and the complete generated prompt.</li>
+<li>Provider errors are converted into <code>{ status: &#39;failed&#39; }</code>; they are not thrown.</li>
+<li>Provider <code>no-guide</code> decisions are returned as <code>{ status: &#39;no-guide&#39; }</code>; no validation or write happens.</li>
+<li>Markdown guide responses must pass <code>validateGuideMarkdown</code> before dry-run or write status is reported.</li>
+<li><code>dryRun</code> validates the provider output but never creates <code>guide.md</code>.</li>
+<li><code>updateExisting</code> only affects the returned status (<code>updated</code> vs <code>created</code>); it does not loosen validation or write-safety checks.</li>
+<li>Filesystem write errors are caught and returned as failed results.</li>
+</ul>
+<p>Guide writes use <code>guidePathForFolder</code> and <code>absoluteFromRepo</code> from <code>src/core/paths.ts</code>. Keep path behavior centralized there rather than hand-building output paths in new generation code.</p>
+<h3 id="h-prompt-construction">Prompt Construction</h3>
+<p><code>src/guides/prompts.ts</code> builds the prompt sent to the provider. The prompt is deliberately opinionated: it asks for an internal wiki page with useful maintainer context, not a generated file inventory. It also tells the provider to return the exact no-guide sentinel when a folder does not deserve a guide.</p>
+<p>The prompt includes:</p>
+<ul>
+<li>the target folder path and required first heading;</li>
+<li>the list of direct files for the folder;</li>
+<li>readable direct-file contents, subject to safety and size limits;</li>
+<li>skipped-source notes for files that cannot or should not be included;</li>
+<li>existing child <code>guide.md</code> contents, so parent guides can summarize child modules using available local context;</li>
+<li>truncation notes when content is omitted due to aggregate prompt budget.</li>
+</ul>
+<p>File content inclusion has several guards:</p>
+<ul>
+<li>Gitlinks with mode <code>160000</code> are treated as submodules and skipped.</li>
+<li>Symlinks are skipped and reported with their target.</li>
+<li>Files larger than <code>maxFileBytes</code> are skipped.</li>
+<li>Buffers containing NUL bytes are treated as binary.</li>
+<li>Invalid UTF-8 is skipped using a fatal <code>TextDecoder</code>.</li>
+<li>The aggregate prompt is bounded by <code>PROMPT_BUDGET_CHARS</code> unless an explicit <code>promptBudgetChars</code> is supplied.</li>
+</ul>
+<p>When changing prompt wording, update <code>src/guides/prompts.test.ts</code> if the tested guidance changes intentionally. The tests assert important policy language because prompt drift directly changes generated guide quality.</p>
+<h3 id="h-validation-rules">Validation Rules</h3>
+<p><code>src/guides/validate.ts</code> enforces only structural requirements that are necessary for downstream consistency:</p>
+<ul>
+<li>empty output is rejected;</li>
+<li>the first non-leading-whitespace line must be exactly <code># .</code> for the repository root or <code># &lt;folderPath&gt;</code> for other folders;</li>
+<li>there must be body content after the top heading;</li>
+<li>there must be at least one <code>##</code> section heading.</li>
+</ul>
+<p>Validation intentionally accepts flexible section names. Older generated guides with sections like <code>## Responsibility</code>, <code>## Important Files</code>, <code>## Child Modules</code>, and <code>## Notes</code> remain valid, but the prompt no longer forces that template.</p>
+<p><code>isNoGuideResponse</code> only recognizes the exact no-guide sentinel after trimming surrounding whitespace. Any extra text means it is not a no-guide response and should be handled as normal markdown or rejected by validation.</p>
+<h3 id="h-write-safety-and-filesystem-invariants">Write Safety and Filesystem Invariants</h3>
+<p><code>assertCanWriteGuide</code> in <code>src/guides/generate.ts</code> is the safety gate before writing. It allows a missing output file, but refuses to write when the target <code>guide.md</code> already exists as:</p>
+<ul>
+<li>a symlink;</li>
+<li>anything other than a regular file.</li>
+</ul>
+<p>This is important because guide generation may be run over arbitrary repository contents. Do not bypass this check for update flows. In particular, writing through a symlink could modify a file outside the repository.</p>
+<p>The final write normalizes output to exactly the provider markdown with trailing whitespace trimmed and one final newline appended.</p>
+<h3 id="h-gotchas">Gotchas</h3>
+<ul>
+<li><code>buildGuidePrompt</code> reads direct files from the working tree using repo-relative paths plus Git entry metadata. If a caller builds stale context and then mutates the checkout, prompt content can reflect the later filesystem state.</li>
+<li>Prompt truncation is deterministic but cumulative. Adding new prompt sections before file content may cause less source content to reach the provider.</li>
+<li><code>truncatedNotes</code> can itself be affected by the budget. Tests cover the externally important behavior, but avoid depending on every incidental note string unless it is part of a user-facing contract.</li>
+<li><code>outputGuidePath</code> in <code>src/guides/prompts.ts</code> mirrors guide-path construction but generation code uses <code>guidePathForFolder</code>. Prefer the core path helper for new write or read behavior to avoid path-policy drift.</li>
+</ul>
+<h3 id="h-testing-notes">Testing Notes</h3>
+<p>The tests in this folder are behavior-focused and use fixture repositories from <code>src/test-utils/fixture-repo.ts</code>.</p>
+<ul>
+<li><code>src/guides/generate.test.ts</code> covers status mapping, dry-run behavior, validation failures, provider failures, no-guide results, successful writes, and symlink refusal.</li>
+<li><code>src/guides/prompts.test.ts</code> covers prompt policy text, direct-file inclusion, child guide inclusion, skipped-source notes, binary and invalid UTF-8 handling, submodule detection, and prompt-budget truncation.</li>
+<li><code>src/guides/validate.test.ts</code> covers the exact no-guide sentinel behavior and the intentionally flexible markdown validation rules.</li>
+</ul>
+<p>When changing guide structure policy, update prompt and validation tests together. When changing filesystem safety or write status semantics, update generation tests and check callers that may rely on <code>GenerateStatus</code>.</p>
+        </div>
+      </article>
+      <article class="guide-page" id="page-src-llm" data-page="page-src-llm" tabindex="-1">
+        <header class="page-header">
+          <p class="eyebrow">src/llm/guide.md</p>
+          <h2>src/llm</h2>
+          <p class="excerpt">How This Fits src/llm is the provider boundary for guide generation.</p>
+        </header>
+        <div class="markdown-body">
+<h3 id="h-how-this-fits">How This Fits</h3>
+<p><code>src/llm</code> is the provider boundary for guide generation. Code outside this folder should talk to the <code>GuideProvider</code> interface in <code>src/llm/provider.ts</code> rather than directly depending on a vendor SDK.</p>
+<p>The current implementation is OpenAI-backed via <code>OpenAIGuideProvider</code> in <code>src/llm/openai.ts</code>. It accepts a fully composed prompt and returns one normalized <code>ProviderResult</code>:</p>
+<ul>
+<li><code>{ type: &#39;guide&#39;, markdown }</code> for committed guide content</li>
+<li><code>{ type: &#39;no-guide&#39; }</code> when the model returns the exact no-guide sentinel</li>
+<li><code>{ type: &#39;error&#39;, message }</code> for provider failures that should be reported without throwing</li>
+</ul>
+<p>This folder does not build prompts, validate guide shape, walk the repo, or decide which folders deserve guides. Those responsibilities live elsewhere. The LLM layer’s job is to send the prompt, enforce provider-level limits/timeouts/retries, and normalize the provider response.</p>
+<h3 id="h-provider-contract">Provider Contract</h3>
+<p><code>GuideProvider.generateGuide(folderPath, prompt)</code> must be safe for orchestration code to call without wrapping provider-specific exceptions.</p>
+<p>Important invariants:</p>
+<ul>
+<li>Return a <code>ProviderResult</code>; do not throw for ordinary provider/API failures.</li>
+<li>Include <code>folderPath</code> in error messages so callers can report which guide failed.</li>
+<li>Preserve model output exactly for successful guides. <code>openai.ts</code> returns <code>response.output_text</code> unchanged unless it is the no-guide sentinel.</li>
+<li>Recognize no-guide responses through <code>isNoGuideResponse</code> from <code>src/guides/validate.ts</code>, not by duplicating sentinel parsing.</li>
+<li>Use <code>RESERVED_OUTPUT_TOKENS</code> from <code>src/constants.ts</code> for <code>max_output_tokens</code>; do not hard-code an unrelated provider limit here.</li>
+</ul>
+<h3 id="h-openai-workflow">OpenAI Workflow</h3>
+<p><code>OpenAIGuideProvider</code> uses the OpenAI Responses API:</p>
+<pre><code>client.responses.create(
+  {
+    model,
+    input: prompt,
+    max_output_tokens: RESERVED_OUTPUT_TOKENS
+  },
+  { signal }
+)</code></pre>
+<p>The constructor takes <code>RepoGuideConfig</code>, an optional OpenAI-like client, and an optional timeout. The injected client is intentionally typed as <code>Pick&lt;OpenAI, &#39;responses&#39;&gt;</code>, which keeps tests and future adapters lightweight.</p>
+<p>Operational behavior:</p>
+<ul>
+<li>Default request timeout is 60 seconds.</li>
+<li>Requests are aborted with <code>AbortController</code>.</li>
+<li>One retry is attempted for transient HTTP-style statuses: <code>408</code>, <code>409</code>, <code>425</code>, <code>429</code>, <code>500</code>, <code>502</code>, <code>503</code>, <code>504</code>.</li>
+<li>Retry delay is currently fixed at 500 ms.</li>
+<li>Non-transient failures and exhausted retries are converted into <code>{ type: &#39;error&#39; }</code>.</li>
+</ul>
+<p>If you add another provider, keep these semantics consistent unless the wider orchestration layer is also updated.</p>
+<h3 id="h-config-expectations">Config Expectations</h3>
+<p>The provider assumes LLM config has already been validated. <code>src/llm/openai.test.ts</code> exercises validation through <code>assertLlmConfig</code> from <code>src/config/env.ts</code> to ensure LLM commands require:</p>
+<ul>
+<li><code>OPENAI_API_KEY</code></li>
+<li><code>REPOGUIDE_MODEL</code></li>
+<li>supported <code>REPOGUIDE_PROVIDER</code></li>
+</ul>
+<p><code>OpenAIGuideProvider</code> still defensively falls back to an empty string for <code>REPOGUIDE_MODEL</code>, but that should not be treated as a valid runtime path. Fix validation/config flow rather than relying on that fallback.</p>
+<h3 id="h-gotchas">Gotchas</h3>
+<ul>
+<li>The no-guide response must be exact after trimming. Do not interpret arbitrary prose like “no guide needed” as a sentinel.</li>
+<li><code>output_text</code> may be missing from the OpenAI response; the current behavior treats that as an empty guide, not an error. Change this only with tests and awareness of downstream validation.</li>
+<li><code>generateGuide</code> catches errors and returns error results. Throwing from provider implementations will likely break callers that expect normalized results.</li>
+<li>The retry loop creates a fresh <code>AbortController</code> per attempt. Preserve that pattern if changing retry behavior.</li>
+<li>If adding exponential backoff or more retries, update timer-based tests to avoid slow or flaky test runs.</li>
+</ul>
+<h3 id="h-testing-notes">Testing Notes</h3>
+<p><code>src/llm/openai.test.ts</code> uses an injected fake OpenAI client rather than mocking the SDK globally. Follow that pattern for provider changes.</p>
+<p>Existing coverage verifies:</p>
+<ul>
+<li>request body includes the configured model, prompt, and <code>RESERVED_OUTPUT_TOKENS</code></li>
+<li>an <code>AbortSignal</code> is passed to the SDK</li>
+<li>sentinel responses become <code>{ type: &#39;no-guide&#39; }</code></li>
+<li>one transient error is retried</li>
+<li>non-transient errors include folder context</li>
+<li>slow requests are aborted</li>
+<li>LLM config validation rejects missing/unsupported settings</li>
+</ul>
+<p>When changing timeout or retry behavior, use fake timers (<code>vi.useFakeTimers()</code>) and advance timers explicitly so tests remain deterministic.</p>
+        </div>
+      </article>
+      <article class="guide-page" id="page-src-test-utils" data-page="page-src-test-utils" tabindex="-1">
+        <header class="page-header">
+          <p class="eyebrow">src/test-utils/guide.md</p>
+          <h2>src/test-utils</h2>
+          <p class="excerpt">Purpose src/test-utils contains shared helpers for tests that need realistic repository state instead of mocked filesystem data.</p>
+        </header>
+        <div class="markdown-body">
+<h3 id="h-purpose">Purpose</h3>
+<p><code>src/test-utils</code> contains shared helpers for tests that need realistic repository state instead of mocked filesystem data. The current utility builds an isolated, disposable Git repository on disk so tests can exercise code paths that depend on actual Git behavior, commits, working-tree state, file modes, paths, and command output.</p>
+<p>Use this folder for cross-test infrastructure only. Test-specific setup should stay in the test file unless it is reused or encodes a repo-level invariant that many tests need.</p>
+<h3 id="h-fixture-repository-workflow">Fixture Repository Workflow</h3>
+<p><code>src/test-utils/fixture-repo.ts</code> exports <code>createFixtureRepo()</code>, which creates a temporary repository under the OS temp directory with a <code>repoguide-test-</code> prefix.</p>
+<p>The returned <code>FixtureRepo</code> object provides:</p>
+<ul>
+<li><code>root</code>: absolute real path to the temporary repository.</li>
+<li><code>write(repoPath, contents)</code>: writes a file relative to the fixture repo root, creating parent directories.</li>
+<li><code>mkdir(repoPath)</code>: creates directories relative to the fixture repo root.</li>
+<li><code>git(args)</code>: runs <code>git</code> synchronously in the fixture repo and returns stdout as UTF-8.</li>
+<li><code>commitAll(message?)</code>: stages all changes and creates a commit.</li>
+<li><code>cleanup()</code>: recursively removes the temp repository.</li>
+</ul>
+<p>Typical usage pattern:</p>
+<pre><code>const repo = createFixtureRepo();
+
+try {
+  repo.write(&#39;src/example.ts&#39;, &#39;export const value = 1;\n&#39;);
+  repo.commitAll(&#39;add example&#39;);
+
+  // run code under test against repo.root
+} finally {
+  repo.cleanup();
+}</code></pre>
+<p>Always call <code>cleanup()</code> in a <code>finally</code> block or equivalent test cleanup hook. The helper intentionally creates real directories and Git history, so leaked fixtures accumulate in the system temp directory.</p>
+<h3 id="h-contracts-and-invariants">Contracts and Invariants</h3>
+<p>The fixture repo is initialized with a real <code>git init</code>, not a fake <code>.git</code> directory. This is important because tests using this utility are expected to validate behavior against Git’s actual command semantics.</p>
+<p>The helper configures repository-local identity:</p>
+<ul>
+<li><code>user.email=repoguide@example.com</code></li>
+<li><code>user.name=Repo Guide</code></li>
+</ul>
+<p>This keeps <code>git commit</code> independent of a developer’s global Git configuration and makes CI behavior deterministic.</p>
+<p>It also sets:</p>
+<ul>
+<li><code>core.filemode=true</code></li>
+</ul>
+<p>Tests that depend on executable-bit detection or file mode changes can rely on Git tracking mode changes inside the fixture. Be careful when adding tests that assume platform-specific filesystem behavior; Git may still behave differently on filesystems that do not support Unix-style permissions.</p>
+<p>Paths passed to <code>write()</code> and <code>mkdir()</code> are repository-relative. Do not pass absolute paths unless you intentionally want <code>path.join(root, repoPath)</code> behavior, which may ignore the fixture root on some platforms.</p>
+<h3 id="h-when-to-extend-this-folder">When to Extend This Folder</h3>
+<p>Add helpers here when they are broadly useful for repository-oriented tests, especially if they:</p>
+<ul>
+<li>reduce repeated Git setup boilerplate,</li>
+<li>encode stable fixture behavior needed by multiple test suites,</li>
+<li>make cleanup safer or more consistent,</li>
+<li>improve cross-platform handling of temporary repos.</li>
+</ul>
+<p>Avoid adding assertions or behavior that is specific to one feature area. This utility should stay focused on creating and manipulating fixture repositories, not on knowing what production code is supposed to output.</p>
+<h3 id="h-gotchas">Gotchas</h3>
+<p><code>git(args)</code> uses <code>execFileSync</code> with stderr captured. Failed commands throw, and the thrown error contains command output details. Tests that intentionally exercise failing Git commands should catch the exception explicitly.</p>
+<p><code>commitAll()</code> stages <code>.</code> from the fixture root. It will include every untracked and modified file in the temp repo, so tests should avoid leaving incidental files around before committing.</p>
+<p>The temp root is normalized with <code>fs.realpathSync.native()</code>. This avoids surprises from symlinked temp directories and gives callers the canonical path that Git commands are actually using.</p>
+        </div>
+      </article>
+    </main>
+  </div>
+  <script id="page-data" type="application/json">[{"id":"page-root","title":"Repository Root","folderPath":".","guidePath":"guide.md","excerpt":"How This Repository Fits Together repoguide is a TypeScript CLI package that generates committed guide.md wiki pages for Git repositories.","searchText":". guide.md how this repository fits together repoguide is a typescript cli package that generates committed guide.md wiki pages for git repositories. the root folder is the product/package boundary: it defines the npm package, public command surface, build/test configuration, implementation brief, and maintainer handoff notes. the actual runtime implementation lives under src . use src/guide.md as the starting point for code-level navigation; the root is mainly for package-wide contracts and project workflow. the public cli surface is intentionally small: - repoguide init - repoguide init --force - repoguide check - repoguide update - repoguide estimate init - repoguide estimate update changes that alter this command surface should be reflected together in readme.md , cli tests under src , and any workflow documentation. maintainer workflow before implementation work, read tasks.md . it is the authoritative product and architecture brief, including edge cases and test expectations. progress.md is the living handoff log: update it when changing task status, adding notable behavior, or leaving follow-up work. for agent-driven work, agents.md contains the repo-specific operating note and examples for launching other coding agents headlessly. in particular, it documents that tasks.md should be read before implementation and progress.md should be updated when task status changes. typical validation commands are: - npm run build - npm test - npm run coverage - npm run pack:smoke use npm run pack:smoke before packaging-sensitive changes because the package publishes only dist and readme.md . package and runtime contracts this package is esm-only and targets node.js 26.x . the typescript configuration uses module / moduleresolution set to nodenext , emits declarations and source maps into dist , and treats src as the only runtime source root. important package-level contracts: - the npm binary is repoguide , pointing at ./dist/cli.js . - build output is not source-of-truth; edit src , then run npm run build . - package-lock.json is committed and should be kept in sync with dependency changes. - runtime dependencies are deliberately narrow: cli parsing, gitignore-style matching, openai provider support, and schema validation. - tests use vitest and live next to source files as src/ / .test.ts ; they are excluded from the build. do not add a second configuration system casually. the product spec in tasks.md requires environment variables plus a repo-root .env loaded through node’s built-in support, not dotenv . documentation and spec boundaries readme.md is the user-facing quickstart and command reference. keep it concise and aligned with actual cli behavior. there is a dedicated readme test in src/readme.test.ts that pins command examples, so command or option changes need matching documentation and tests. tasks.md is more detailed than normal project documentation because it doubles as an implementation brief for agents. it captures product behavior that may not be obvious from the code, including: - git-tracked files are the only source inputs. - .guideignore affects guide prompts but is not itself guide content. - guide.md files are excluded as source files, while child guide contents may inform parent guides. - the no-guide sentinel is exactly repoguide no guide . - freshness is based on git history and diffs, not timestamps. - init and update intentionally have different scopes. when behavior changes, update tasks.md if the product contract changes, and update progress.md with what was actually implemented or deferred. root configuration notes the root typescript and vitest configs are intentionally simple. tsconfig.json excludes tests and src/test-utils from emitted package output. vitest.config.ts includes all src/ / .ts files for coverage except tests, test utilities, and declaration files. coverage is currently reported but not enforced at 100%, despite the original task brief asking for a full coverage gate. this is an intentional project-status decision recorded in progress.md ; do not reintroduce strict thresholds without confirming that direction. the .gitignore is broad enough for common node and frontend tooling artifacts. repoguide-specific source filtering is not handled there; generated-guide input filtering belongs to .guideignore in repositories where repoguide is run. child module map go to src for implementation work. its child guide explains the code boundaries in detail: - src/commands owns command workflows, progress output, dry-run behavior, counters, provider injection, and exit codes. - src/core owns git interaction, path normalization, .guideignore , tree construction, planning, and freshness semantics. - src/guides owns prompt construction, guide validation, no-guide handling, and safe writes. - src/config owns environment loading and validation. - src/llm owns provider abstractions and openai integration. - src/test-utils owns shared fixture repository helpers for tests. as a rule, root-level changes should be about package shape, documentation, task tracking, or build/test configuration. runtime behavior usually belongs under src . gotchas - this repository is itself the tool that generates guide.md files. avoid treating guides as generated throwaways; they are committed internal wiki pages and should be useful to future maintainers. - tasks.md may describe desired or historical behavior in more detail than readme.md ; prefer it when implementing internals. - progress.md is append-style handoff context, not a replacement for tests. keep entries concise but specific about files changed, tests run, outcomes, and follow-ups. - node 26 is part of the product contract. dependency or api choices should not silently broaden or lower the runtime target. - if command examples change, update readme.md and the readme/cli tests together."},{"id":"page-src","title":"src","folderPath":"src","guidePath":"src/guide.md","excerpt":"How This Fits src is the top-level implementation boundary for RepoGuide.","searchText":"src src/guide.md how this fits src is the top-level implementation boundary for repoguide. it contains the cli entrypoint, process-level constants, and the major feature areas that do the real work: - src/commands orchestrates user workflows init , update , check , estimate . - src/core models the git repository, guide paths, planning, and freshness rules. - src/guides builds prompts, validates model output, and writes guide.md . - src/config loads and validates environment/configuration. - src/llm is the provider abstraction and openai integration. - src/test-utils provides fixture git repositories for tests. the top-level src/cli.ts should stay thin. it owns command registration, process exit-code mapping, and expected cli error handling. it should not learn repository scanning rules, prompt structure, provider behavior, or freshness semantics; those belong in the child modules above. cli entry point and exit semantics src/cli.ts exports two entry points: - buildprogram constructs the commander program and is used by tests to inspect help output and command registration. - main argv = process.argv is the executable wrapper used when the package is run as a cli. the registered command surface is: - repoguide init - --dry-run - --force - repoguide update - --dry-run - repoguide check - repoguide estimate init - repoguide estimate update each cli action delegates immediately to the matching run function in src/commands and then sets process.exitcode from the returned { exitcode } . important exit-code behavior: - command workflow results decide normal command exit codes. - repoguideerror is considered an expected user-facing failure: print only error.message to stderr and use error.exitcode . - commander help exits as 0 . - commander usage errors, such as unknown commands, map to 2 . - other unexpected errors are printed and also map to 2 . do not replace process.exitcode handling with direct process.exit in normal workflow code. tests rely on being able to call main and inspect process.exitcode without terminating the process. constants and shared policy src/constants.ts is the central place for cross-module policy constants: - guide filename is the canonical guide filename. - no guide sentinel is the exact model response that means “do not create a guide”. - prompt budget chars bounds prompt construction. - reserved output tokens is the output token reservation used by the llm layer. - default max file bytes is the default direct-file inclusion limit for prompts. if changing one of these values, check all consumers rather than treating the change as local. in particular: - the no-guide sentinel is part of the prompt/provider/validation contract. - prompt budget and max-file limits affect generated guide quality and token estimation. - reserved output tokens affect openai request sizing and tests in src/llm . main control flow a typical generation command flows through the codebase like this: 1. src/cli.ts parses arguments and calls a run command. 2. src/commands loads configuration, builds repository context, chooses a plan, reports progress, and returns an exit code. 3. src/core provides git state, repo-relative path semantics, tree construction, guide planning, and stale/fresh decisions. 4. src/guides builds the folder prompt, calls a guideprovider , validates markdown, and writes guide.md if appropriate. 5. src/llm sends the already-built prompt to the configured provider and normalizes the response. keep these layers clean. if a change needs to know “which folders should be processed,” it usually belongs in src/core or src/commands . if it needs to know “what prompt should be sent” or “is this guide markdown valid,” it belongs in src/guides . if it needs to know openai request/retry behavior, it belongs in src/llm . child modules src/commands go here when changing what a cli command does after it has been parsed. this layer owns workflow orchestration, progress output, counters, dry-run behavior, provider injection, and command exit codes. notable contracts: - runcheck is read-only and exits 1 when guides need attention. - runinit creates missing guides bottom-up and skips existing guides unless --force . - runupdate updates stale existing guides, protects guides with uncommitted edits, and does not create missing guides. - runestimate mirrors real planning logic without requiring llm credentials or calling a provider. src/core go here for repository modeling and freshness rules. it centralizes git calls, .guideignore , repo-relative paths, folder tree construction, and command planning. important invariants: - repo-relative root is . . - repo paths are posix-style. - guidepathforfolder should be used instead of hand-built guide paths. - submodules are opaque gitlinks. - mode-only changes do not make guides stale. - direct source changes affect that folder; descendant changes propagate upward through descendant guide freshness. src/guides go here for prompt content, output validation, and safe guide writes. this layer turns a planned foldernode into created , updated , dry-run , no-guide , or failed . important invariants: - provider output is validated before write or dry-run success. - the first heading must match the target folder. - at least one ## section is required. - the exact no-guide sentinel is recognized only after trimming surrounding whitespace. - existing symlink or non-regular guide.md targets are refused. src/config go here for environment and .env behavior. loadconfig cwd resolves the repo root, loads repo-local .env , preserves shell precedence, validates config, and returns { config, reporoot } . generation commands should call assertllmconfig config only when they actually need provider credentials/model settings. inspection and estimate workflows should remain usable without secrets. src/llm go here for provider integrations. code outside this folder should use guideprovider , not an sdk directly. the openai implementation sends a fully composed prompt through the responses api, reserves output tokens via reserved output tokens , recognizes the no-guide sentinel through guide validation helpers, retries transient failures once, and returns normalized provider results rather than throwing for ordinary api failures. src/test-utils go here only for shared test infrastructure. the current helper creates real temporary git repositories and is used by integration-style tests that need actual git behavior. testing notes the top-level tests focus on the cli contract rather than command internals: - src/cli.test.ts verifies registered commands/help and commander unknown-command behavior. - src/cli-main.test.ts verifies main exit-code mapping and repoguideerror handling. - src/readme.test.ts keeps readme command examples aligned with the registered cli surface. when changing command names, options, or help-visible structure, update tests and readme together. src/readme.test.ts intentionally asserts the readme command examples exactly: - repoguide init - repoguide init --force - repoguide check - repoguide update - repoguide estimate init - repoguide estimate update for workflow behavior, prefer tests in the relevant child module: - command orchestration and output: src/commands - git/path/freshness behavior: src/core - prompt/write/validation behavior: src/guides - provider behavior: src/llm - config and environment behavior: src/config gotchas - buildprogram calls .exitoverride . this is intentional so main and tests can convert commander exits into repoguide’s exit-code behavior. - unknown commander errors should not print an extra raw error from main ; commander already writes usage errors through its configured output path. - main detects direct execution by comparing import.meta.url with pathtofileurl process.argv 1 .href . keep this check if refactoring the cli entrypoint for esm. - top-level cli tests mock process.exit , process.cwd , and console/stdout/stderr. always restore global process state in tests that add similar mocks. - the constants in src/constants.ts encode cross-layer contracts. changing them can alter prompt generation, model calls, validation, and estimate output all at once."},{"id":"page-src-commands","title":"src/commands","folderPath":"src/commands","guidePath":"src/commands/guide.md","excerpt":"How This Fits src/commands contains the programmatic implementations of the CLI workflows: checking guide freshness, creating missing guides, refreshing stale guides, and estima...","searchText":"src/commands src/commands/guide.md how this fits src/commands contains the programmatic implementations of the cli workflows: checking guide freshness, creating missing guides, refreshing stale guides, and estimating llm token usage. these functions are thin orchestration layers. they should decide what workflow to run and how to report it , while delegating repository modeling, freshness rules, prompt construction, file writes, and provider calls to nearby modules. the main entry points are: - runcheck - runinit - runupdate - runestimate each command returns a shared commandresult shape with an exitcode , and writes human-facing progress/status output directly to console.log / console.error . command responsibilities runcheck runcheck is read-only. it loads config, builds repository context, determines the current repo-relative folder, then asks checkplan which folders are relevant. for each planned folder it calls freshnessforfolder . important behavior: - exits 0 only when no planned guide needs attention. - exits 1 when one or more guides are stale, missing, or otherwise need attention. - prints all guides are fresh. on success. - prints one line per attention item as: - \u003cfolder.path : \u003creason , \u003creason do not add generation or mutation behavior here. check is intentionally a pure reporting command apart from stdout. runinit runinit creates guides for folders in the repository, using initplan . important behavior: - requires llm config via assertllmconfig , even when a provider is not explicitly supplied. - uses openaiguideprovider by default, but tests and callers can inject a guideprovider . - walks the init plan in the order returned by initplan ; current behavior relies on deepest folders being generated before parents. - skips existing guides unless force is set. - if an existing skipped guide appears stale, it reports that fact but does not update it. - with force , existing guides are regenerated using updateexisting: true . - with dryrun , generation is planned and provider interaction still happens through generateforfolder , but guides are not written. counters are part of the user contract. preserve their meanings: - created : incremented for both newly created and force-updated guides. - skipped : existing guides skipped because force was not set. - stale : skipped existing guides that freshness logic considers stale. - no-guide : provider said the folder does not deserve a guide. - dry-run : generation would have happened but no file was written. - failed : provider/generation failure. a nonzero exit code is used only for failed generations, not for stale skipped guides or no-guide responses. runupdate runupdate refreshes existing guides that need attention. it does not create missing guides. important behavior: - requires llm config via assertllmconfig . - builds an updateplan from the current repo-relative folder. - processes child folders before parent folders. - recomputes freshness for each folder immediately before updating it. - skips folders whose guide is missing. - skips guides with uncommitted changes, protecting local edits. - tracks guides updated during this run with changedguides , so parent freshness can account for child guides already regenerated in the same command. this changedguides set is important: without it, parent guides may still look stale because their child guide inputs changed during the current update run. provider no-guide results leave the existing guide unchanged and are not failures. actual failed generations produce stderr output and make the command exit 1 . runestimate runestimate is a dry accounting workflow, not a generation workflow. it intentionally mirrors real command selection logic: - estimate init uses initplan , then excludes folders that already have guides. - estimate update uses updateplan , then includes only existing guides that need attention. - it builds real guide prompts with buildguideprompt and estimates input tokens from prompt character counts. - it does not require api credentials, because it does not call an llm provider. keep this command aligned with runinit and runupdate planning rules. if prompt selection, folder ordering, or freshness eligibility changes in the real commands, update estimate behavior too. control flow and boundaries a typical command follows this pipeline: 1. loadconfig cwd resolves repo root and environment-derived settings. 2. buildrepocontext reporoot, cwd scans the repository and prepares tree/source/git context. 3. a plan function from src/core/plans.ts chooses target folders. 4. freshnessforfolder from src/core/stale.ts decides whether existing guides need attention. 5. generation commands call generateforfolder from src/guides/generate.ts . 6. provider calls go through guideprovider , with openaiguideprovider as the default production provider. 7. commands print progress and return { exitcode } . keep command modules free of low-level repository logic. if behavior depends on tree construction, git entries, guide paths, or staleness rules, it usually belongs in src/core . if behavior depends on prompt content or guide file writing, it usually belongs in src/guides . contracts and invariants - commands accept an optional cwd ; tests rely on this to run inside fixture repositories. - runinit and runupdate accept injected providers. preserve this seam for tests and non-openai integrations. - runcheck and runestimate should not call providers. - runupdate must not overwrite guides with uncommitted changes. - runupdate must not create missing guides; missing guide creation belongs to runinit . - runinit without force must not overwrite existing guides. - runestimate should not require openai api key or model configuration. - progress output is tested and effectively part of the cli contract. be cautious when changing message text, counter names, or ordering. gotchas - runinit calls assertllmconfig before deciding whether every guide will be skipped. this means even a no-op init currently requires llm configuration. - runestimate avoids this by only using config values needed for prompt sizing, especially repoguide max file bytes . - folder.path may be . for the repo root. output and provider calls should preserve that convention. - guidepathforfolder '.' is used to map the root folder to the root guide.md ; do not hand-roll guide paths in commands. - runinit uses created for both create and force-regenerate results. this is existing behavior and is asserted by tests. - runupdate ’s progress index has no /total because eligibility can change as earlier folders are updated. testing notes src/commands/commands.test.ts is an integration-style test suite for command workflows using fixture repositories. it verifies planning order, stdout/stderr messages, exit codes, provider injection, dry-run behavior, stale detection, and protection of uncommitted guide edits. when changing command behavior, add or update tests here if the change affects: - folder selection or ordering; - counter summaries; - progress output; - exit-code semantics; - provider result handling; - dry-run behavior; - stale/missing guide handling; - environment variable requirements. the fake provider in these tests records requested folder paths, which is often the clearest way to assert command planning without depending on generated markdown content."},{"id":"page-src-config","title":"src/config","folderPath":"src/config","guidePath":"src/config/guide.md","excerpt":"How This Fits src/config is the runtime configuration boundary for RepoGuide.","searchText":"src/config src/config/guide.md how this fits src/config is the runtime configuration boundary for repoguide. code outside this folder should treat configuration as a parsed, typed repoguideconfig rather than reading raw environment variables directly. the main entry point is loadconfig cwd , which: 1. resolves the git repository root using findreporoot from src/core/git.js . 2. looks for a repo-local .env file at that root. 3. loads .env values into process.env . 4. restores shell-provided values so the caller’s environment takes precedence over .env . 5. validates and normalizes the resulting environment through the zod schema in src/config/schema.ts . 6. returns both the parsed config and resolved reporoot . this means callers get two pieces of state that are intentionally coupled: the configuration and the repository root used to locate .env . configuration contracts the schema in src/config/schema.ts defines the supported environment surface: - openai api key - repoguide provider - repoguide model - repoguide max file bytes important invariants: - repoguide provider defaults to openai . - repoguide max file bytes is coerced to a positive integer and defaults to default max file bytes from src/constants.js . - llm credentials and model are optional at load time. - llm credentials and model become required only when assertllmconfig config is called. that split is deliberate. non-generation workflows should be able to load config without requiring secrets. shell vs .env precedence loadconfig uses node’s loadenvfile , which mutates process.env . to keep expected cli behavior, this folder preserves shell precedence manually: - existing shell values for relevant keys are snapshotted before loading .env . - after .env loading, shell values are restored. - values missing from the shell may still be supplied by .env . when changing config keys, update the relevant-key handling in src/config/env.ts ; otherwise shell precedence and cleanup behavior may silently diverge from schema behavior. error handling and secret redaction configuration failures are wrapped in repoguideerror from src/core/errors.js . src/config/env.ts redacts openai api key from error messages before throwing. keep this property intact when modifying validation or .env loading paths. tests assert that invalid environment errors do not leak secret values. the redaction currently only targets openai api key , so adding new secret-bearing config keys should include corresponding redaction behavior. when to use assertllmconfig use loadconfig when a command needs general repository/config context. use assertllmconfig config only at the boundary where guide generation actually needs an llm provider. this keeps validation user-friendly: - commands that inspect files or compute repo context can run without api keys. - generation fails early with clear errors if provider, key, or model settings are missing or unsupported. assertllmconfig currently enforces that only openai is supported. if adding providers, this function is the enforcement point that must change alongside schema and generation code. testing notes src/config/env.test.ts is the regression suite for the main contracts: - defaults load without llm secrets. - .env values are honored. - shell environment values override .env . - invalid values throw repoguideerror -style messages without exposing secrets. - llm-specific fields are not required until assertllmconfig . tests mutate process.env , so they snapshot and restore known keys after each case. if new config keys are added, extend that test key list to avoid cross-test contamination."},{"id":"page-src-core","title":"src/core","folderPath":"src/core","guidePath":"src/core/guide.md","excerpt":"How This Fits src/core contains the repository-analysis primitives used by the CLI/workflow layers to decide which folders need guide.md files, which existing guides are stale,...","searchText":"src/core src/core/guide.md how this fits src/core contains the repository-analysis primitives used by the cli/workflow layers to decide which folders need guide.md files, which existing guides are stale, and in what order guide work should happen. it is intentionally mostly side-effect-light except for git/filesystem boundaries: - git state is read through src/core/git.ts . - repo-relative path semantics are centralized in src/core/paths.ts . - .guideignore filtering is applied by src/core/guideignore.ts . - folder guide candidates are modeled by src/core/tree.ts . - command-level folder plans are assembled in src/core/plans.ts . - staleness/freshness decisions live in src/core/stale.ts . code outside this folder should prefer these apis over shelling out to git or hand-normalizing paths, because the details here encode repo-specific behavior around guide.md , submodules, ignored files, and mode-only changes. core contracts and invariants repo paths are posix-style and cannot escape the repo all repo-relative paths should flow through normalizerepopath from src/core/paths.ts before being stored or compared. important conventions: - root is represented as . . - separators are / , even on windows. - .. escapes are rejected with repoguideerror . - guide paths are derived with guidepathforfolder , not string concatenation, because the root guide is guide.md while nested guides are \u003cfolder /guide.md . use helpers such as folderof , joinrepopath , isdescendantorself , and absolutefromrepo rather than duplicating path logic. many freshness and tree operations depend on exact string comparisons. git paths with newlines are unsupported src/core/git.ts uses nul-delimited git output where possible, but explicitly rejects paths containing \\n or \\r . this is intentional and tested. if adding new git parsing code, keep the same behavior by validating paths before returning them. submodules are opaque listtrackedentries reads git ls-files --stage , so submodules appear as gitlink entries with mode 160000 . they are treated as tracked entries but not recursed into as source files. do not add filesystem recursion here unless it preserves that boundary. mode-only changes do not make guides stale git reports chmod-only changes as m . src/core/git.ts distinguishes content changes by comparing --name-status with --numstat ; m entries with no numstat content change become status mode-only . src/core/stale.ts ignores those for freshness. keep this behavior when changing diff parsing, or chmod/line-ending noise will cause unnecessary guide updates. data flow the common analysis path is: 1. buildrepocontext reporoot, cwd in src/core/plans.ts - calls listtrackedentries - loads .guideignore - filters source files - builds a foldertree 2. a plan function chooses folders: - initplan returns all folders deepest-first. - checkplan returns the current folder’s descendants plus its ancestors. - updateplan separates child folders from parent folders so children can be updated before parent summaries. 3. stalefolders calls freshnessforfolder for each planned folder. the tree is built from both eligible source files and existing guide files. this means folders with an existing guide.md stay visible even if they currently have no eligible source files; that lets the tool check or update documentation-only guide nodes instead of silently dropping them. .guideignore semantics loadguideignore in src/core/guideignore.ts wraps the ignore package and adds tool-specific defaults: - any guide.md is ignored as source input. - .guideignore itself is ignored as source input. - patterns in .guideignore use gitignore-style matching, including negation order. this filtering is used when building repocontext.sourcefiles . staleness checks also reload .guideignore to avoid marking ignored direct source changes as stale. when changing ignore behavior, update both guide candidate generation and freshness expectations; otherwise the tree and stale checks can disagree. freshness model src/core/stale.ts answers whether a folder’s guide needs attention. a folder needs attention when: - its guide file is missing; - its guide exists but has no git history; - a direct source file in that folder changed after the guide’s last commit or in the working tree; - a descendant guide changed after the guide’s last commit or in the working tree; - a descendant guide was updated earlier in the same run via extrachangedguides . important boundaries: - only direct child files make a folder stale for source changes. descendant source changes are expected to be summarized by descendant guides first, then propagated upward through “descendant guide changed”. - renames and deletes count by considering both path and oldpath . - guide changes propagate upward, but a guide does not mark itself stale because it changed. - mode-only changes are ignored. - ignored source files are ignored for staleness. freshnessforfolder currently accepts eligiblesourcefiles but does not use it directly; it uses git changes plus .guideignore checks. the argument is still part of the public core api and is passed from stalefolders . planning behavior src/core/plans.ts encodes command-oriented folder selection: - reporelativefolder reporoot, cwd resolves real paths before calculating the current repo-relative folder. this helps with symlinks. - initplan is deepest-first for the whole tree, so leaf guides can be created before parent summaries. - checkplan includes both descendants of the current folder and ancestors up to root, then sorts by path. - updateplan returns: - child : descendants of the current folder, deepest-first; - parent : ancestors of the current folder, bottom-up, excluding folders already in child . if you change ordering, check that parent guide generation still sees the child guide updates it is supposed to summarize. error handling use repoguideerror from src/core/errors.ts for expected operational failures such as invalid repo paths, unsupported git paths, or git command failures. it carries an exitcode for the cli layer. avoid throwing raw error for user-facing validation failures in this folder. testing notes the tests in this folder use fixture git repositories and cover edge cases that are easy to regress: - spaces in paths; - empty repositories and detached head; - renames, deletes, staged and unstaged changes; - chmod-only changes; - crlf rewrites that git considers unchanged; - .guideignore negation; - folders that only exist because they contain guides; - submodules as opaque gitlinks; - rejection of newline-containing git paths. when changing git parsing or freshness logic, run the corresponding src/core/ .test.ts tests rather than relying only on high-level cli tests."},{"id":"page-src-guides","title":"src/guides","folderPath":"src/guides","guidePath":"src/guides/guide.md","excerpt":"How This Fits src/guides is the guide-production layer: it turns a planned folder from src/core/plans.ts / src/core/tree.ts into either a committed guide.md , a dry-run result,...","searchText":"src/guides src/guides/guide.md how this fits src/guides is the guide-production layer: it turns a planned folder from src/core/plans.ts / src/core/tree.ts into either a committed guide.md , a dry-run result, a no-guide decision, or a failure. it sits between repository discovery and the llm provider: 1. core code builds a repocontext with a folder tree and git metadata. 2. generateforfolder in src/guides/generate.ts builds a prompt for one foldernode . 3. a guideprovider from src/llm/provider.ts returns guide markdown, a no-guide result, or an error. 4. the markdown is validated locally before any filesystem write. 5. if valid and not a dry run, the guide is written to the path resolved by src/core/paths.ts . this folder is intentionally not responsible for selecting which folders should be processed, discovering git state, or talking to a specific llm api. it owns prompt shape, guide-output validation, and safe writing behavior. main workflow the central entry point is generateforfolder in src/guides/generate.ts . important contracts in that workflow: - the provider receives the repo-relative folder path and the complete generated prompt. - provider errors are converted into { status: 'failed' } ; they are not thrown. - provider no-guide decisions are returned as { status: 'no-guide' } ; no validation or write happens. - markdown guide responses must pass validateguidemarkdown before dry-run or write status is reported. - dryrun validates the provider output but never creates guide.md . - updateexisting only affects the returned status updated vs created ; it does not loosen validation or write-safety checks. - filesystem write errors are caught and returned as failed results. guide writes use guidepathforfolder and absolutefromrepo from src/core/paths.ts . keep path behavior centralized there rather than hand-building output paths in new generation code. prompt construction src/guides/prompts.ts builds the prompt sent to the provider. the prompt is deliberately opinionated: it asks for an internal wiki page with useful maintainer context, not a generated file inventory. it also tells the provider to return the exact no-guide sentinel when a folder does not deserve a guide. the prompt includes: - the target folder path and required first heading; - the list of direct files for the folder; - readable direct-file contents, subject to safety and size limits; - skipped-source notes for files that cannot or should not be included; - existing child guide.md contents, so parent guides can summarize child modules using available local context; - truncation notes when content is omitted due to aggregate prompt budget. file content inclusion has several guards: - gitlinks with mode 160000 are treated as submodules and skipped. - symlinks are skipped and reported with their target. - files larger than maxfilebytes are skipped. - buffers containing nul bytes are treated as binary. - invalid utf-8 is skipped using a fatal textdecoder . - the aggregate prompt is bounded by prompt budget chars unless an explicit promptbudgetchars is supplied. when changing prompt wording, update src/guides/prompts.test.ts if the tested guidance changes intentionally. the tests assert important policy language because prompt drift directly changes generated guide quality. validation rules src/guides/validate.ts enforces only structural requirements that are necessary for downstream consistency: - empty output is rejected; - the first non-leading-whitespace line must be exactly # . for the repository root or # \u003cfolderpath for other folders; - there must be body content after the top heading; - there must be at least one ## section heading. validation intentionally accepts flexible section names. older generated guides with sections like ## responsibility , ## important files , ## child modules , and ## notes remain valid, but the prompt no longer forces that template. isnoguideresponse only recognizes the exact no-guide sentinel after trimming surrounding whitespace. any extra text means it is not a no-guide response and should be handled as normal markdown or rejected by validation. write safety and filesystem invariants assertcanwriteguide in src/guides/generate.ts is the safety gate before writing. it allows a missing output file, but refuses to write when the target guide.md already exists as: - a symlink; - anything other than a regular file. this is important because guide generation may be run over arbitrary repository contents. do not bypass this check for update flows. in particular, writing through a symlink could modify a file outside the repository. the final write normalizes output to exactly the provider markdown with trailing whitespace trimmed and one final newline appended. gotchas - buildguideprompt reads direct files from the working tree using repo-relative paths plus git entry metadata. if a caller builds stale context and then mutates the checkout, prompt content can reflect the later filesystem state. - prompt truncation is deterministic but cumulative. adding new prompt sections before file content may cause less source content to reach the provider. - truncatednotes can itself be affected by the budget. tests cover the externally important behavior, but avoid depending on every incidental note string unless it is part of a user-facing contract. - outputguidepath in src/guides/prompts.ts mirrors guide-path construction but generation code uses guidepathforfolder . prefer the core path helper for new write or read behavior to avoid path-policy drift. testing notes the tests in this folder are behavior-focused and use fixture repositories from src/test-utils/fixture-repo.ts . - src/guides/generate.test.ts covers status mapping, dry-run behavior, validation failures, provider failures, no-guide results, successful writes, and symlink refusal. - src/guides/prompts.test.ts covers prompt policy text, direct-file inclusion, child guide inclusion, skipped-source notes, binary and invalid utf-8 handling, submodule detection, and prompt-budget truncation. - src/guides/validate.test.ts covers the exact no-guide sentinel behavior and the intentionally flexible markdown validation rules. when changing guide structure policy, update prompt and validation tests together. when changing filesystem safety or write status semantics, update generation tests and check callers that may rely on generatestatus ."},{"id":"page-src-llm","title":"src/llm","folderPath":"src/llm","guidePath":"src/llm/guide.md","excerpt":"How This Fits src/llm is the provider boundary for guide generation.","searchText":"src/llm src/llm/guide.md how this fits src/llm is the provider boundary for guide generation. code outside this folder should talk to the guideprovider interface in src/llm/provider.ts rather than directly depending on a vendor sdk. the current implementation is openai-backed via openaiguideprovider in src/llm/openai.ts . it accepts a fully composed prompt and returns one normalized providerresult : - { type: 'guide', markdown } for committed guide content - { type: 'no-guide' } when the model returns the exact no-guide sentinel - { type: 'error', message } for provider failures that should be reported without throwing this folder does not build prompts, validate guide shape, walk the repo, or decide which folders deserve guides. those responsibilities live elsewhere. the llm layer’s job is to send the prompt, enforce provider-level limits/timeouts/retries, and normalize the provider response. provider contract guideprovider.generateguide folderpath, prompt must be safe for orchestration code to call without wrapping provider-specific exceptions. important invariants: - return a providerresult ; do not throw for ordinary provider/api failures. - include folderpath in error messages so callers can report which guide failed. - preserve model output exactly for successful guides. openai.ts returns response.output text unchanged unless it is the no-guide sentinel. - recognize no-guide responses through isnoguideresponse from src/guides/validate.ts , not by duplicating sentinel parsing. - use reserved output tokens from src/constants.ts for max output tokens ; do not hard-code an unrelated provider limit here. openai workflow openaiguideprovider uses the openai responses api: the constructor takes repoguideconfig , an optional openai-like client, and an optional timeout. the injected client is intentionally typed as pick\u003copenai, 'responses' , which keeps tests and future adapters lightweight. operational behavior: - default request timeout is 60 seconds. - requests are aborted with abortcontroller . - one retry is attempted for transient http-style statuses: 408 , 409 , 425 , 429 , 500 , 502 , 503 , 504 . - retry delay is currently fixed at 500 ms. - non-transient failures and exhausted retries are converted into { type: 'error' } . if you add another provider, keep these semantics consistent unless the wider orchestration layer is also updated. config expectations the provider assumes llm config has already been validated. src/llm/openai.test.ts exercises validation through assertllmconfig from src/config/env.ts to ensure llm commands require: - openai api key - repoguide model - supported repoguide provider openaiguideprovider still defensively falls back to an empty string for repoguide model , but that should not be treated as a valid runtime path. fix validation/config flow rather than relying on that fallback. gotchas - the no-guide response must be exact after trimming. do not interpret arbitrary prose like “no guide needed” as a sentinel. - output text may be missing from the openai response; the current behavior treats that as an empty guide, not an error. change this only with tests and awareness of downstream validation. - generateguide catches errors and returns error results. throwing from provider implementations will likely break callers that expect normalized results. - the retry loop creates a fresh abortcontroller per attempt. preserve that pattern if changing retry behavior. - if adding exponential backoff or more retries, update timer-based tests to avoid slow or flaky test runs. testing notes src/llm/openai.test.ts uses an injected fake openai client rather than mocking the sdk globally. follow that pattern for provider changes. existing coverage verifies: - request body includes the configured model, prompt, and reserved output tokens - an abortsignal is passed to the sdk - sentinel responses become { type: 'no-guide' } - one transient error is retried - non-transient errors include folder context - slow requests are aborted - llm config validation rejects missing/unsupported settings when changing timeout or retry behavior, use fake timers vi.usefaketimers and advance timers explicitly so tests remain deterministic."},{"id":"page-src-test-utils","title":"src/test-utils","folderPath":"src/test-utils","guidePath":"src/test-utils/guide.md","excerpt":"Purpose src/test-utils contains shared helpers for tests that need realistic repository state instead of mocked filesystem data.","searchText":"src/test-utils src/test-utils/guide.md purpose src/test-utils contains shared helpers for tests that need realistic repository state instead of mocked filesystem data. the current utility builds an isolated, disposable git repository on disk so tests can exercise code paths that depend on actual git behavior, commits, working-tree state, file modes, paths, and command output. use this folder for cross-test infrastructure only. test-specific setup should stay in the test file unless it is reused or encodes a repo-level invariant that many tests need. fixture repository workflow src/test-utils/fixture-repo.ts exports createfixturerepo , which creates a temporary repository under the os temp directory with a repoguide-test- prefix. the returned fixturerepo object provides: - root : absolute real path to the temporary repository. - write repopath, contents : writes a file relative to the fixture repo root, creating parent directories. - mkdir repopath : creates directories relative to the fixture repo root. - git args : runs git synchronously in the fixture repo and returns stdout as utf-8. - commitall message? : stages all changes and creates a commit. - cleanup : recursively removes the temp repository. typical usage pattern: always call cleanup in a finally block or equivalent test cleanup hook. the helper intentionally creates real directories and git history, so leaked fixtures accumulate in the system temp directory. contracts and invariants the fixture repo is initialized with a real git init , not a fake .git directory. this is important because tests using this utility are expected to validate behavior against git’s actual command semantics. the helper configures repository-local identity: - user.email=repoguide@example.com - user.name=repo guide this keeps git commit independent of a developer’s global git configuration and makes ci behavior deterministic. it also sets: - core.filemode=true tests that depend on executable-bit detection or file mode changes can rely on git tracking mode changes inside the fixture. be careful when adding tests that assume platform-specific filesystem behavior; git may still behave differently on filesystems that do not support unix-style permissions. paths passed to write and mkdir are repository-relative. do not pass absolute paths unless you intentionally want path.join root, repopath behavior, which may ignore the fixture root on some platforms. when to extend this folder add helpers here when they are broadly useful for repository-oriented tests, especially if they: - reduce repeated git setup boilerplate, - encode stable fixture behavior needed by multiple test suites, - make cleanup safer or more consistent, - improve cross-platform handling of temporary repos. avoid adding assertions or behavior that is specific to one feature area. this utility should stay focused on creating and manipulating fixture repositories, not on knowing what production code is supposed to output. gotchas git args uses execfilesync with stderr captured. failed commands throw, and the thrown error contains command output details. tests that intentionally exercise failing git commands should catch the exception explicitly. commitall stages . from the fixture root. it will include every untracked and modified file in the temp repo, so tests should avoid leaving incidental files around before committing. the temp root is normalized with fs.realpathsync.native . this avoids surprises from symlinked temp directories and gives callers the canonical path that git commands are actually using."}]</script>
+  <script>
+const pages = JSON.parse(document.getElementById('page-data').textContent);
+const links = [...document.querySelectorAll('.nav-link')];
+const articles = [...document.querySelectorAll('.guide-page')];
+const search = document.getElementById('search');
+const empty = document.getElementById('empty-state');
+const themeToggle = document.getElementById('theme-toggle');
+
+function setTheme(theme) {
+  document.body.classList.toggle('dark', theme === 'dark');
+  localStorage.setItem('repoguide-theme', theme);
+}
+
+setTheme(localStorage.getItem('repoguide-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+themeToggle.addEventListener('click', () => setTheme(document.body.classList.contains('dark') ? 'light' : 'dark'));
+
+function activate(id) {
+  const next = pages.some((page) => page.id === id) ? id : 'page-root';
+  for (const article of articles) article.classList.toggle('active', article.dataset.page === next);
+  for (const link of links) link.classList.toggle('active', link.dataset.page === next);
+  const article = document.querySelector('[data-page="' + CSS.escape(next) + '"].guide-page');
+  if (article) article.focus({ preventScroll: true });
+}
+
+function route() {
+  activate(location.hash.slice(1));
+}
+
+function applySearch() {
+  const query = search.value.trim().toLowerCase();
+  let visible = 0;
+  for (const link of links) {
+    const page = pages.find((candidate) => candidate.id === link.dataset.page);
+    const show = !query || page.searchText.includes(query);
+    link.hidden = !show;
+    if (show) visible += 1;
+  }
+  empty.hidden = visible !== 0;
+  const active = links.find((link) => link.classList.contains('active'));
+  if (query && active?.hidden) {
+    const first = links.find((link) => !link.hidden);
+    if (first) location.hash = first.dataset.page;
+  }
+}
+
+window.addEventListener('hashchange', route);
+search.addEventListener('input', applySearch);
+document.addEventListener('keydown', (event) => {
+  if (event.key === '/' && document.activeElement !== search) {
+    event.preventDefault();
+    search.focus();
+  }
+});
+
+if (!location.hash) location.hash = 'page-root';
+route();
+applySearch();
+  </script>
+</body>
+</html>
