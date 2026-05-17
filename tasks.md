@@ -35,6 +35,7 @@ Commands:
 - `repoguide init`: create missing guides bottom-up across the repo.
 - `repoguide update`: update stale guides in the current folder scope, including affected child and parent guides.
 - `repoguide check`: report guides that are missing or stale.
+- `repoguide site`: generate a ready-to-view static HTML wiki from existing `guide.md` files.
 - `repoguide estimate init`: estimate token usage for `init`.
 - `repoguide estimate update`: estimate token usage for `update`.
 
@@ -45,6 +46,7 @@ Command scopes:
 - `update` uses the same current-folder scope as `check`: stale child guides are processed deepest-first, then stale ancestor guides are processed bottom-up toward the root.
 - `estimate init` uses `init` scope.
 - `estimate update` uses `update` scope.
+- `site` runs across the repository and includes existing tracked and untracked non-ignored `guide.md` files so users can preview freshly generated guides before committing them.
 
 Environment variables:
 
@@ -60,9 +62,11 @@ CLI output:
 - `check` prints each guide needing attention with concise reasons.
 - `init` and `update` print created, skipped, stale, no-guide, and failed folder counts.
 - `estimate init` and `estimate update` print estimated input tokens, reserved output tokens, folder count, and largest folders.
+- `site` prints the output `index.html` path and guide count, or reports that no guides exist yet.
 - Exit code `0` means the command completed successfully. For `check`, exit `1` means guides need attention and exit `2` means a command error.
 - For `init` and `update`, exit `1` means one or more folder generations failed after being reported; no-guide results, stale-guide notices, skipped existing guides, and dry-run reports are not failures. Exit `2` means a command error.
 - For `estimate init` and `estimate update`, exit `2` on command errors and otherwise exit `0`.
+- For `site`, exit `1` means no guides were found and exit `2` means a command error.
 - Exact wording can evolve during implementation, but tests must pin the chosen output so README examples stay true.
 
 Internal limits:
@@ -452,7 +456,7 @@ Spec:
   - environment setup
   - `.env` example using Node built-in loading
   - `.guideignore` example
-  - `init`, `check`, `update`, `estimate init`, `estimate update`
+  - `init`, `check`, `update`, `site`, `estimate init`, `estimate update`
   - why `init` bootstraps the whole repo while `update` works from the current folder scope
 - Add package metadata and an npm pack smoke test.
 
@@ -464,6 +468,31 @@ Tests:
 - Binary runs after build/package.
 - README examples match actual CLI behavior.
 - Large-repo fixture validates deterministic traversal and bottom-up generation performance at a small but representative scale.
+
+## Task 13: Static HTML Wiki
+
+Spec:
+
+- Add `repoguide site`.
+- Generate a ready-to-view static HTML wiki from existing `guide.md` files.
+- Default output is `repoguide-site/index.html` at the repo root.
+- Support `--out <dir>` for a custom output directory and `--title <title>` for a custom site title.
+- Include tracked guides and untracked non-ignored guides so users can preview freshly generated guides before committing them.
+- Do not require LLM configuration or an API key.
+- Escape guide content before rendering to HTML.
+- Render enough Markdown for generated guides to be useful: headings, paragraphs, lists, links, inline code, fenced code, emphasis, and blockquotes.
+- Include navigation, search, and light/dark theme behavior without external assets or network calls.
+- Report the written `index.html` path and guide count.
+- If no guides exist, report that `repoguide init` should be run first and exit `1`.
+
+Tests:
+
+- CLI help lists `site` and its options.
+- Site generation includes tracked and untracked guide files.
+- Output HTML includes navigation, search, rendered Markdown, and escaped guide content.
+- Custom output directory and title work.
+- No-guide repositories are reported without writing an index.
+- README examples match actual CLI behavior.
 
 ## Post-v1 Ideas
 

@@ -29,8 +29,11 @@ function programOutput(argv: string[]): { stdout: string; stderr: string; exitCo
 describe('cli', () => {
   it('lists top-level commands and estimate subcommands', () => {
     expect(programOutput(['--help']).stdout).toContain('init');
+    expect(programOutput(['--help']).stdout).toContain('site');
     const initHelp = buildProgram().commands.find((command) => command.name() === 'init')?.helpInformation() ?? '';
     expect(initHelp).toContain('--force');
+    const siteHelp = buildProgram().commands.find((command) => command.name() === 'site')?.helpInformation() ?? '';
+    expect(siteHelp).toContain('--out');
     const estimate = buildProgram().commands.find((command) => command.name() === 'estimate')?.helpInformation() ?? '';
     expect(estimate).toContain('init');
     expect(estimate).toContain('update');

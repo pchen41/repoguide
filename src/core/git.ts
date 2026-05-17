@@ -70,6 +70,23 @@ export function listTrackedFiles(repoRoot: string): string[] {
   return listTrackedEntries(repoRoot).map((entry) => entry.path).sort();
 }
 
+export function listVersionedAndUntrackedFiles(repoRoot: string): string[] {
+  const raw = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], {
+    cwd: repoRoot,
+    encoding: 'buffer',
+    stdio: ['ignore', 'pipe', 'pipe']
+  });
+  return raw
+    .toString('utf8')
+    .split('\0')
+    .filter(Boolean)
+    .map((rawPath) => {
+      assertNoNewlinePath(rawPath);
+      return normalizeRepoPath(rawPath);
+    })
+    .sort();
+}
+
 export function latestCommitForPath(repoRoot: string, repoPath: string): string | undefined {
   assertNoNewlinePath(repoPath);
   if (!hasHead(repoRoot)) return undefined;

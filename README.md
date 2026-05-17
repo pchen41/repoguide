@@ -4,6 +4,8 @@ Generate committed `guide.md` wiki pages for Git repositories.
 
 `repoguide` reads the tracked files in your repo, asks an LLM to explain the folders that matter, and writes the results back into the tree as normal Markdown. The goal is not to document every file. The goal is to leave useful local context for maintainers, reviewers, and coding agents: what a folder owns, how it fits with nearby modules, what is easy to misuse, and where to look next.
 
+It can also turn those guides into a ready-to-view static HTML wiki for browsing, sharing, or publishing.
+
 ## Why
 
 Large codebases already contain the facts, but the shape of the system often lives in people's heads. `repoguide` turns that local knowledge into small wiki pages that travel with the code.
@@ -12,6 +14,7 @@ Large codebases already contain the facts, but the shape of the system often liv
 - **Folder-level context:** each guide explains one folder in terms of responsibilities, workflows, boundaries, and gotchas.
 - **Bottom-up generation:** child guides can inform parent guides, which helps higher-level pages summarize the system instead of listing files.
 - **Git-aware updates:** `check` and `update` use tracked file history and working tree changes to find stale guides.
+- **Static wiki export:** `site` builds a polished HTML guide browser with search, navigation, and a light/dark theme.
 - **No hidden metadata:** generated guides do not contain tool state. If a guide is stale, Git is the source of truth.
 
 ## Status
@@ -43,7 +46,7 @@ REPOGUIDE_MAX_FILE_BYTES=50000
 
 Shell environment variables take precedence over `.env`. `REPOGUIDE_PROVIDER` defaults to `openai`, and `REPOGUIDE_MAX_FILE_BYTES` defaults to `50000`.
 
-`check` and `estimate` do not call an LLM and do not require an API key.
+`check`, `site`, and `estimate` do not call an LLM and do not require an API key.
 
 ## Quick Start
 
@@ -62,6 +65,7 @@ When code changes later:
 ```sh
 repoguide check
 repoguide update
+repoguide site
 git diff
 ```
 
@@ -72,6 +76,7 @@ repoguide init
 repoguide init --force
 repoguide check
 repoguide update
+repoguide site
 repoguide estimate init
 repoguide estimate update
 ```
@@ -91,6 +96,17 @@ Reports missing or stale guides in the current folder scope: the current folder,
 Regenerates stale guides in the same current-folder scope used by `check`. Child guides are processed before parent guides so higher-level pages can use fresh child context.
 
 `update` supports `--dry-run` to report planned updates without writing files.
+
+### `site`
+
+Generates a static HTML wiki from existing `guide.md` files. By default it writes `repoguide-site/index.html` at the repo root.
+
+```sh
+repoguide site
+repoguide site --out docs/repoguide --title "Project Wiki"
+```
+
+The generated page is self-contained: it includes inline CSS and JavaScript for navigation, search, and theme switching.
 
 ### `estimate`
 

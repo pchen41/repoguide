@@ -5,6 +5,7 @@ import { isRepoGuideError } from './core/errors.js';
 import { runCheck } from './commands/check.js';
 import { runEstimate } from './commands/estimate.js';
 import { runInit } from './commands/init.js';
+import { runSite } from './commands/site.js';
 import { runUpdate } from './commands/update.js';
 
 export function buildProgram(): Command {
@@ -31,6 +32,13 @@ export function buildProgram(): Command {
     .command('check')
     .description('Report guides that are missing or stale.')
     .action(async () => runAndExit(await runCheck(process.cwd())));
+
+  program
+    .command('site')
+    .description('Generate a static HTML wiki from guide.md files.')
+    .option('--out <dir>', 'output directory')
+    .option('--title <title>', 'site title')
+    .action(async (options: { out?: string; title?: string }) => runAndExit(await runSite(process.cwd(), { outDir: options.out, title: options.title })));
 
   const estimate = program.command('estimate').description('Estimate token usage without calling an LLM.');
   estimate.command('init').description('Estimate token usage for init.').action(async () => runAndExit(await runEstimate('init', process.cwd())));

@@ -16,6 +16,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Eighth pass added generation progress messages for `init` and `update`.
 - Ninth pass loosened guide validation and prompting from a fixed template to a free-form wiki page with a minimal heading/section contract.
 - Tenth pass rewrote the README for a public GitHub audience.
+- Eleventh pass added `repoguide site` for static HTML wiki export.
 - 100% coverage enforcement is intentionally skipped for now per user direction; coverage still reports current percentages.
 
 ## Task Progress
@@ -32,6 +33,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Task 10: `update` - mostly done.
 - Task 11: `estimate init` and `estimate update` - mostly done.
 - Task 12: Integration, Coverage, and Packaging - mostly done.
+- Task 13: Static HTML Wiki - mostly done.
 
 ## In Flight
 
@@ -54,8 +56,22 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Eighth pass added progress output before provider calls, including bounded `init [i/n]` messages and incremental `update [i]` messages.
 - Ninth pass replaced the fixed required-section guide template with flexible wiki sections while retaining exact top-heading validation and requiring at least one `##` section.
 - Tenth pass expanded README positioning, setup, command behavior, guide style, privacy/source-input notes, exit codes, and development workflow for public GitHub readers.
+- Eleventh pass added `repoguide site`, a self-contained static HTML wiki exporter with navigation, search, theme switching, Markdown rendering, tracked/untracked guide discovery, docs, and tests.
 - Remaining work: 100% coverage enforcement remains intentionally skipped; extra hardening could include malformed `.env` behavior if Node exposes stricter parse errors, more README output wording assertions, and additional large-repo performance fixtures.
 - Coverage command now reports but does not enforce 100% thresholds, by user request.
+
+Task:
+Task 13: Static HTML Wiki
+Status:
+mostly done / static wiki export added
+Files changed:
+src/commands/site.ts, src/commands/site.test.ts, src/core/git.ts, src/cli.ts, src/cli.test.ts, src/readme.test.ts, README.md, tasks.md, progress.md
+Tests run:
+npm run build; npm test; npm run coverage; npm_config_cache=/private/tmp/repoguide-npm-cache npm run pack:smoke; node dist/cli.js site --out /private/tmp/repoguide-site-check --title "repoguide Wiki"
+Result:
+`repoguide site` writes a ready-to-view static wiki from existing guide.md files
+Follow-ups:
+Browser visual verification of the file URL was blocked by the in-app browser URL policy; CLI export and generated HTML content were verified.
 
 Task:
 Task 12: Integration, Coverage, and Packaging

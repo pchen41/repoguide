@@ -9,8 +9,8 @@ describe('README examples', () => {
     const commands = commandBlock.split('\n').map((line) => line.replace(/^repoguide\s+/, ''));
     const help = buildProgram().helpInformation();
 
-    expect(commands).toEqual(['init', 'init --force', 'check', 'update', 'estimate init', 'estimate update']);
-    for (const command of ['init', 'check', 'update', 'estimate']) {
+    expect(commands).toEqual(['init', 'init --force', 'check', 'update', 'site', 'estimate init', 'estimate update']);
+    for (const command of ['init', 'check', 'update', 'site', 'estimate']) {
       expect(help).toContain(command);
     }
     const estimateHelp = buildProgram().commands.find((command) => command.name() === 'estimate')?.helpInformation() ?? '';
