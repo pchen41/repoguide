@@ -52,8 +52,11 @@ describe('site command', () => {
     expect(html).not.toContain('<script>bad()</script>');
 
     const pageData = html.match(/<script id="page-data" type="application\/json">(?<json>[\s\S]+?)<\/script>/)?.groups?.json ?? '';
-    const parsed = JSON.parse(pageData) as Array<{ folderPath: string }>;
+    const parsed = JSON.parse(pageData) as Array<{ folderPath: string; excerpt: string; searchText: string }>;
     expect(parsed.map((page) => page.folderPath)).toEqual(['.', 'src', 'src/core']);
+    expect(parsed[0].excerpt).toBe('Root guide with important context and a safe link https://example.com.');
+    expect(parsed[0].excerpt).not.toContain('How This Fits');
+    expect(parsed[0].searchText).toContain('how this fits');
   });
 
   it('reports when there are no guides to publish', async () => {

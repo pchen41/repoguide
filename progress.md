@@ -17,6 +17,7 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Ninth pass loosened guide validation and prompting from a fixed template to a free-form wiki page with a minimal heading/section contract.
 - Tenth pass rewrote the README for a public GitHub audience.
 - Eleventh pass added `repoguide site` for static HTML wiki export.
+- Twelfth pass fixed site excerpts so section headings are not duplicated under page titles.
 - 100% coverage enforcement is intentionally skipped for now per user direction; coverage still reports current percentages.
 
 ## Task Progress
@@ -57,8 +58,22 @@ Read `tasks.md` first. This file only tracks implementation progress against tho
 - Ninth pass replaced the fixed required-section guide template with flexible wiki sections while retaining exact top-heading validation and requiring at least one `##` section.
 - Tenth pass expanded README positioning, setup, command behavior, guide style, privacy/source-input notes, exit codes, and development workflow for public GitHub readers.
 - Eleventh pass added `repoguide site`, a self-contained static HTML wiki exporter with navigation, search, theme switching, Markdown rendering, tracked/untracked guide discovery, docs, and tests.
+- Twelfth pass changed site subtitle/excerpt generation to skip Markdown headings while preserving headings in search text.
 - Remaining work: 100% coverage enforcement remains intentionally skipped; extra hardening could include malformed `.env` behavior if Node exposes stricter parse errors, more README output wording assertions, and additional large-repo performance fixtures.
 - Coverage command now reports but does not enforce 100% thresholds, by user request.
+
+Task:
+Task 13: Static HTML Wiki
+Status:
+mostly done / excerpt cleanup
+Files changed:
+src/commands/site.ts, src/commands/site.test.ts, progress.md
+Tests run:
+npm run build; npm test; node dist/cli.js site --out /private/tmp/repoguide-site-excerpt-check --title "repoguide Wiki"
+Result:
+site excerpts now skip Markdown section headings so page subtitles do not duplicate headings such as "How This Fits"
+Follow-ups:
+None.
 
 Task:
 Task 13: Static HTML Wiki

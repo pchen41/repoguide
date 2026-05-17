@@ -58,13 +58,14 @@ function guidePageFromMarkdown(repoRoot: string, guidePath: string): GuidePage {
   const markdown = fs.readFileSync(absoluteFromRepo(repoRoot, guidePath), 'utf8');
   const bodyMarkdown = stripFirstHeading(markdown);
   const plainText = markdownToPlainText(bodyMarkdown);
+  const excerptText = markdownToExcerptText(bodyMarkdown);
   return {
     id: `page-${slugify(folderPath)}`,
     title: folderPath === '.' ? 'Repository Root' : folderPath,
     folderPath,
     guidePath,
     html: renderMarkdown(bodyMarkdown),
-    excerpt: firstUsefulLine(plainText),
+    excerpt: firstUsefulLine(excerptText),
     searchText: `${folderPath} ${guidePath} ${plainText}`.toLowerCase()
   };
 }
@@ -261,7 +262,22 @@ function markdownToPlainText(markdown: string): string {
     .replace(/^#{1,6}\s+/gm, '')
     .replace(/[`*_>\[\]()]/g, ' ')
     .replace(/\s+/g, ' ')
+    .replace(/\s+([.,!?;:])/g, '$1')
     .trim();
+}
+
+function markdownToExcerptText(markdown: string): string {
+  const lines: string[] = [];
+  let inCode = false;
+  for (const line of markdown.replace(/\r\n/g, '\n').split('\n')) {
+    if (/^```/.test(line)) {
+      inCode = !inCode;
+      continue;
+    }
+    if (inCode || /^#{1,6}\s+/.test(line)) continue;
+    lines.push(line);
+  }
+  return markdownToPlainText(lines.join('\n'));
 }
 
 function firstUsefulLine(plainText: string): string {
