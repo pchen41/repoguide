@@ -1,21 +1,14 @@
 # repoguide
 
-Generate committed `guide.md` wiki pages for Git repositories.
+Generate `guide.md` wiki pages for Git repositories to provide context to humans and AI.
 
-`repoguide` reads the tracked files in your repo, asks an LLM to explain the folders that matter, and writes the results back into the tree as normal Markdown. The goal is not to document every file. The goal is to leave useful local context for maintainers, reviewers, and coding agents: what a folder owns, how it fits with nearby modules, what is easy to misuse, and where to look next.
+`repoguide` reads the tracked files in your repo, asks an LLM to explain the folders that matter, and writes the results back into the tree as normal Markdown. Leaves useful local context including what a folder owns, how it fits with nearby modules and what is easy to misuse.
 
 It can also turn those guides into a ready-to-view static HTML wiki for browsing, sharing, or publishing.
 
 ## Why
 
-Large codebases already contain the facts, but the shape of the system often lives in people's heads. `repoguide` turns that local knowledge into small wiki pages that travel with the code.
-
-- **Committed docs:** guides are ordinary `guide.md` files, so Git handles review, history, and freshness.
-- **Folder-level context:** each guide explains one folder in terms of responsibilities, workflows, boundaries, and gotchas.
-- **Bottom-up generation:** child guides can inform parent guides, which helps higher-level pages summarize the system instead of listing files.
-- **Git-aware updates:** `check` and `update` use tracked file history and working tree changes to find stale guides.
-- **Static wiki export:** `site` builds a polished HTML guide browser with search, navigation, and a light/dark theme.
-- **No hidden metadata:** generated guides do not contain tool state. If a guide is stale, Git is the source of truth.
+For large codebases, the shape of the system often lives in people's heads. LLM agents can read through code, but often gets stuck in the weeds instead of seeing the bigger picture. Having summaries of each folder help people figure out where to look and point out non-obvious behavior that would otherwise lead to bugs or non-optimal implementation.
 
 ## Status
 
@@ -128,28 +121,6 @@ fixtures/large/**
 ```
 
 `.guideignore` uses Gitignore-style patterns. The `.guideignore` file itself is treated as tool configuration, not source context.
-
-## Guide Style
-
-Guides are meant to read like internal wiki pages, not generated inventories. A good guide explains the folder in terms an experienced developer would actually need:
-
-```md
-# src/core
-
-## How This Fits
-
-This folder owns Git inspection, path normalization, tree planning, and freshness checks. Command handlers compose these helpers rather than shelling out directly.
-
-## Change Guide
-
-When changing stale-guide behavior, start with `stale.ts` and update command tests that exercise `check` and `update` together.
-
-## Gotchas
-
-Only tracked files are source input. Do not rely on untracked fixture files unless the test explicitly adds them to Git.
-```
-
-The exact section names are flexible. The first heading must match the folder path, and the page must include useful body content with at least one second-level section.
 
 ## Output And Exit Codes
 
